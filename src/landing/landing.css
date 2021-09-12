@@ -1,0 +1,150 @@
+.top-banner {
+    width: 100%;
+    height: 600px;
+    background-size: cover;
+    /* background-image: url('/img/banner-home.jpg'); */
+    background-repeat: no-repeat;
+}
+
+.bg-overlay {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background: rgb(255, 255, 255);
+}
+
+.bg-dark {
+    background: transparent !important;
+    /* position: absolute; */
+    width: 100%;
+}
+
+.custom-pos {
+    padding-top: 18rem !important;
+    width: 300px;
+}
+
+ @media (min-width: 768px) {
+     .custom-pos {
+         width: 500px;
+     }
+
+     .custom-form {
+         width: 500px;
+     }
+
+     .form-shadow {
+         
+        box-shadow: 0px 2px 5px darkgrey
+     }
+ }
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.separator::before, .separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgb(182, 175, 175);
+}
+
+.separator::before {
+    margin-right: .35em;
+}
+
+.separator::after {
+    margin-left: .35em;
+}
+
+.Soc-icon {
+    font-size: xx-large;
+    margin: .75rem;
+}
+
+.landing-nav .nav-item {
+    line-height: 3;
+}
+
+.landing-nav .navbar-brand {
+    font-size: 22px !important;
+    font-weight: bolder !important;
+    color: black !important;
+}
+
+.landing-nav .nav-item:not(:last-child) a {
+    color: black;
+}
+
+.landing-nav .nav-item {
+    padding-top: 5px;
+}
+
+.landing-caption {
+    color: #14AFE7;
+}
+
+.landing-caption h5 {
+    font-size: 30px;
+}
+
+.landing-caption p {
+    font-size: 19px;
+}
+
+/* .fancy-outer {
+    overflow-x: hidden;
+} */
+
+.fancy-background {
+    overflow-x: clip !important;
+    position: absolute;
+    background-color: #06DEDB;
+    width: 550px;
+    height: 425px;
+    border-radius: 35px;
+    transform: rotate(-10deg);
+    right: -30px;
+    top: -12px;
+}
+
+.bg-overlay .fancy-background-2 {
+    position: absolute;
+    background-color: #18a8ea0c;
+    width: 540px;
+    height: 500px;
+    border-radius: 35px;
+    right: 30px;
+    top: 80px;
+}
+
+.nav-right {
+    z-index: 9999;
+}
+
+.nav-right .nav-item a {
+    color: black !important;
+}
+
+.nav-item {
+    font-weight: 500;
+}
+
+.landing_phone {
+    z-index: 9999;
+}
+
+.landing_phone img {
+    position: absolute;
+    right: 150px;
+    top: 81px;
+    height: 501px;
+    width: 250px;
+}
+
+.landing-page {
+    overflow-x: hidden;
+    position: relative;
+}

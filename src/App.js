@@ -1,25 +1,22 @@
-import logo from './logo.svg';
 import './App.css';
+import Landing from './landing/landing';
+import { Router, Route, Switch, withRouter } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+// import NavBar from './components/nav/navbar';
+import { Component } from 'react';
+import history from './services/history';
+// import { Navbar } from 'react-bootstrap';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  render() {
+    return (
+      <Router history={history}>
+        {/* <NavBar /> */}
+        <Landing />
+      </Router>
+    );
+
+  }
 }
 
 export default App;
