@@ -148,3 +148,12 @@
     overflow-x: hidden;
     position: relative;
 }
+
+.landing-driver-banner {
+    background-color: #16AAE8;
+    height: 200px;
+}
+
+.landing-page .card {
+    border: none;
+}

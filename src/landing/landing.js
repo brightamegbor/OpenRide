@@ -109,106 +109,63 @@ class Landing extends Component {
                         </div>
                     </div>
                 </div>
+                <div className="landing-driver-banner">
+                    <div className="landing-driver-banner container d-flex flex-row justify-content-center">
 
-                <div className="container mt-4 pt-4 text-center">
-                    <h3 className="separator">
-                        Welcome to Housing
-                    </h3>
-                    <p className="mt-5">How it works?</p>
+                        <div className="p-4  align-self-center">
+                            <h2 className="text-white">Make money on Open Ride</h2>
+                            <p className="text-white">Are u a driver or a car owner, start making money on Open Ride</p>
+                        </div>
+                        
+                        <div className="p-4 align-self-center">
+                            <button type="button" className="btn btn-light rounded-0 p-3">
+                                <a href="/register" 
+                                className="text-black pe-2 ps-2 fw-bold text-decoration-none text-uppercase">
+                                    Get Started
+                                </a>
+                            </button>
+                        </div>
 
-                    <h5 className="m-5">FOR STUDENTS</h5>
+
+                    </div>
                 </div>
 
-                <Container className="mb-3">
-                    <Row className="mb-5">
+                <Container className="mb-3 mt-5 pt-5">
+                    <Row className="mb-5 ">
                         <Col lg={4} md="auto" sm={12}>
                             <Card className="text-center mb-3">
-                                <Card.Header>1. Create an account</Card.Header>
-                                <Card.Body>
-                                    {/* <Card.Img variant="top" src="/img/create-account.png" /> */}
-
-                                    <button type="button" className="btn btn-primary rounded">
-                                        <a href="/register" className="text-white text-decoration-none">
-                                            Sign up
-                                        </a>
-                                    </button>
-                                </Card.Body>
-                                <Card.Footer className="text-muted">
-                                    It`&apos;`s actually free to create an account
-                                </Card.Footer>
+                                <h4>Take Open Ride with you</h4>
+                                Open Ride comes with mobile and desktop apps
+                                
+                                <img alt="create-account" src="/images/create-account.png" />
+                                
                             </Card>
                         </Col>
 
                         <Col lg={4} md="auto" sm={12}>
                             <Card className="text-center mb-3">
-                                <Card.Header>2. Search for an apartment</Card.Header>
+                                <h4>Get a ride within seconds</h4>
+                                Getting the right driver is made easier with OR
                                 <Card.Body>
-                                    {/* <Card.Img variant="top" src="/img/student-search.jpg" /> */}
+                                    <Card.Img variant="top" src="/images/student-search.jpg" />
                                 </Card.Body>
-                                <Card.Footer className="text-muted">
-                                    Search for apartments based on location and price
-                                </Card.Footer>
+                                
+                                
                             </Card>
                         </Col>
 
                         <Col lg={4} md="auto" sm={12}>
                             <Card className="text-center mb-3">
-                                <Card.Header>3. Reserved your apartment</Card.Header>
+                                <h4>Priority on the user</h4>
+                                All your transport problem, solved
                                 <Card.Body>
-                                    {/* <Card.Img variant="top" src="/img/reserved.png" /> */}
+                                    <Card.Img variant="top" src="/images/reserved.png" />
                                 </Card.Body>
-                                <Card.Footer className="text-muted">
-                                    Contact the lessor and arrange for reservation awaiting your arrival
-                                </Card.Footer>
                             </Card>
                         </Col>
                     </Row>
 
-                    <h5 className="m-5 pt-3 text-center">
-                        FOR HOUSE HOLDERS</h5>
-                    <Row>
-                        <Col lg={4} md="auto" sm={12}>
-                            <Card className="text-center mb-3">
-                                <Card.Header>1. Create an account</Card.Header>
-                                <Card.Body>
-                                    {/* <Card.Img variant="top" src="/img/create-account.png" /> */}
-                                    <button type="button" className="btn btn-primary rounded">
-                                        <a href="/register" className="text-white text-decoration-none">
-                                            Sign up
-                                        </a>
-                                    </button>
-                                </Card.Body>
-                                <Card.Footer className="text-muted">
-                                    It`&apos;`s actually free to create an account
-                                </Card.Footer>
-                            </Card>
-                        </Col>
-
-                        <Col lg={4} md="auto" sm={12}>
-                            <Card className="text-center mb-3">
-                                <Card.Header>2. Add your apartment</Card.Header>
-                                <Card.Body>
-                                    {/* <Card.Img variant="top" src="/img/add-apartment.png" /> */}
-                                </Card.Body>
-                                <Card.Footer className="text-muted">
-                                    Add your apartment listing, including location and other details
-                                </Card.Footer>
-                            </Card>
-                        </Col>
-
-                        <Col lg={4} md="auto" sm={12}>
-                            <Card className="text-center mb-3">
-                                <Card.Header>3. Activate your listing</Card.Header>
-                                <Card.Body>
-                                    {/* <Card.Img variant="top" src="/img/activate-apartment.png" /> */}
-                                </Card.Body>
-                                <Card.Footer className="text-muted">
-                                    Wait for approval and your apartment will be live in no time
-                                </Card.Footer>
-                            </Card>
-                        </Col>
-                    </Row>
-                </Container>
+                   </Container>
 
 
             </div>
