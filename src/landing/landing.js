@@ -1,44 +1,62 @@
 import React, { Component } from 'react';
 import './landing.css';
 import { Card, Container, Row, Col, Nav, Navbar } from 'react-bootstrap';
+import { 
+    FaRegQuestionCircle, FaPhoneAlt, FaFacebookSquare,
+    FaTwitterSquare, FaLinkedin, FaInstagram
+} from "react-icons/fa";
+import {
+    MdLocationOn
+} from "react-icons/md";
 
 class Landing extends Component {
-    // componentDidMount() {
-    //     var scrollpos = window.scrollY;
-    //     var navbar = document.querySelector("nav");
+    // state = {};
+    constructor(props) {
+        super(props)
+        this.state = {
+            latitude: null,
+            longitude: null,
+            currentCity: "",
+        }
+    }
+    
+    componentDidMount() {
+        this.currentLocation();
+    }
 
-    //     function add_class_on_scroll() {
-    //         navbar.classList.remove("navbar-dark", "bg-dark", "shadow");
-    //         navbar.classList.add("navbar-light", "bg-light", "shadow");
-    //     }
+    currentLocation = async () => {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                this.getCityName(
+                    position.coords.latitude,
+                    position.coords.longitude
+                );
+            },
+            err => console.log(err)
+        );
+    }
 
-    //     function remove_class_on_scroll() {
-    //         navbar.classList.remove("navbar-light", "bg-light", "shadow");
-    //         navbar.classList.add("navbar-dark", "bg-dark");
-    //     }
+    getCityName = async (latitude, longitude) => {
+        var that = this;
+        // console.log(latitude);
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "https://us1.locationiq.com/v1/reverse.php?key=pk.f23bfccd4ea955650b009b9e1ab35e2b&lat=" +
+            latitude + "&lon=" + longitude + "&format=json", true);
+        xhr.send();
+        xhr.onreadystatechange = processRequest;
+        xhr.addEventListener("readystatechange", processRequest, false);
 
-    //     window.addEventListener('scroll', function () {
-    //         scrollpos = window.scrollY;
-
-    //         if (scrollpos > 60) {
-    //             add_class_on_scroll();
-    //         } else {
-    //             remove_class_on_scroll();
-    //         }
-    //     });
-
-    //     let state = localStorage["appState"];
-
-    //     if (state) {
-    //         let AppState = JSON.parse(state);
-    //         console.log(AppState);
-    //         this.setState({ isLoggedIn: AppState.isLoggedIn, user: AppState });
-
-    //         if (AppState.isLoggedIn) {
-    //             window.location = "/dashboard";
-    //         }
-    //     }
-    // }
+        function processRequest(e) {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var city = response.address.city;
+                that.setState({
+                    currentCity: city,
+                })
+                return;
+            }
+        }
+    }
 
     render() {
         return (
@@ -167,6 +185,77 @@ class Landing extends Component {
 
                    </Container>
 
+                   <footer className="footer">
+                        <Container className="mb-3 mt-5 pt-5">
+                            <Row className="mb-5 ">
+                                <Col lg={4} md="auto" sm={12}>
+                                    <h2>Open Ride</h2>
+
+                                    <div className="pt-5">
+                                        <h6>
+                                            <span className="pe-2"><FaRegQuestionCircle /></span> Help Center
+                                        </h6>
+                                        <h6>
+                                        <span className="pe-2"><FaPhoneAlt /></span> Contacts
+                                        </h6>
+
+                                    </div>
+                                </Col>
+
+                                <Col lg={4} md="auto" sm={12}>
+                                    <h4>Products</h4>
+
+                                    <div className="pt-2">
+                                        <p>Ride</p>
+                                        <p>Drive</p>
+                                        <p>Deliver</p>
+                                        <p>Relocator</p>
+                                        <p>Errand</p>
+                                        <p>Business</p>
+
+                                    </div>
+                                </Col>
+
+                                <Col lg={4} md="auto" sm={12}>
+                                    <h4>About</h4>
+
+                                    <div className="pt-2">
+                                        <p>About us</p>
+                                        <p>Investors</p>
+                                        <p>Contact us</p>
+                                        <p>Newsroom</p>
+                                        <p>Open Ride Careers</p>
+                                        <p>Blog</p>
+
+                                    </div>
+                                </Col>
+                            </Row>
+
+                        <div className="d-flex justify-content-between">
+                            <div>
+                                <p>&copy; {new Date().getFullYear()} Open Ride Inc.</p>
+                            </div>
+
+                            <div className="socials">
+                                <FaFacebookSquare />
+                                <FaTwitterSquare />
+                                <FaLinkedin />
+                                <FaInstagram />
+                            </div>
+
+                            <div className="d-flex">
+                                <p className="pe-4">Privacy</p>
+                                <p className="pe-4">Terms</p>
+                                <p>
+                                    <span className="pe-2"><MdLocationOn /></span>
+                                    {this.state.currentCity !== "" && this.state.currentCity}
+                                    {this.state.currentCity === "" && "Waiting for location"}
+                                </p>
+                            </div>
+
+                        </div>
+                        </Container>
+                   </footer>
 
             </div>
         );

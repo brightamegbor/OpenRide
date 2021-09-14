@@ -157,3 +157,12 @@
 .landing-page .card {
     border: none;
 }
+
+.landing-page .footer {
+    background-color: honeydew;
+    padding-bottom: 60px;
+}
+
+.landing-page .footer .socials svg {
+    margin-right: 15px;
+}
