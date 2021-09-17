@@ -24,9 +24,17 @@ class Landing extends Component {
         this.currentLocation();
     }
 
+    componentWillUnmount() {
+        
+    }
+
     currentLocation = async () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
+                this.setState({
+                    longitude: position.coords.longitude,
+                    latitude: position.coords.latitude
+                });
                 this.getCityName(
                     position.coords.latitude,
                     position.coords.longitude
@@ -38,24 +46,22 @@ class Landing extends Component {
 
     getCityName = async (latitude, longitude) => {
         var that = this;
-        // console.log(latitude);
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', "https://us1.locationiq.com/v1/reverse.php?key=pk.f23bfccd4ea955650b009b9e1ab35e2b&lat=" +
-            latitude + "&lon=" + longitude + "&format=json", true);
-        xhr.send();
-        xhr.onreadystatechange = processRequest;
-        xhr.addEventListener("readystatechange", processRequest, false);
 
-        function processRequest(e) {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
-                var city = response.address.city;
-                that.setState({
-                    currentCity: city,
-                })
-                return;
-            }
+        const response = await fetch("https://us1.locationiq.com/v1/reverse.php?key=pk.f23bfccd4ea955650b009b9e1ab35e2b&lat=" +
+            latitude + "&lon=" + longitude + "&format=json");
+        
+        const data = await response.json();
+        var city;
+        if (data.address.city !== undefined) {
+            city = data.address.city;
+        } else {
+             city = data.address.county;
+
         }
+        console.log(city);
+        that.setState({
+            currentCity: city,
+        });
     }
 
     render() {
@@ -187,23 +193,25 @@ class Landing extends Component {
 
                    <footer className="footer">
                         <Container className="mb-3 mt-5 pt-5">
-                            <Row className="mb-5 ">
+                            <Row className="mb-5 ps-3 ps-lg-0 ps-xl-0">
                                 <Col lg={4} md="auto" sm={12}>
                                     <h2>Open Ride</h2>
 
                                     <div className="pt-5">
-                                        <h6>
-                                            <span className="pe-2"><FaRegQuestionCircle /></span> Help Center
-                                        </h6>
-                                        <h6>
+                                    <h6>
+                                        <span className="pe-2"><FaRegQuestionCircle /></span> Help Center
+                                    </h6>
+                                    <h6 className="pt-2 pb-2 pt-lg-0 pt-md-0 pt-xl-0 pt-xxl-0">
                                         <span className="pe-2"><FaPhoneAlt /></span> Contacts
-                                        </h6>
+                                    </h6>
 
                                     </div>
                                 </Col>
 
                                 <Col lg={4} md="auto" sm={12}>
-                                    <h4>Products</h4>
+                                    <h4 className="pt-4 pt-lg-0 pt-md-0 pt-xl-0 pt-xxl-0">
+                                        Products
+                                    </h4>
 
                                     <div className="pt-2">
                                         <p>Ride</p>
@@ -217,7 +225,7 @@ class Landing extends Component {
                                 </Col>
 
                                 <Col lg={4} md="auto" sm={12}>
-                                    <h4>About</h4>
+                                    <h4 className="pt-4 pt-lg-0 pt-md-0 pt-xl-0 pt-xxl-0">About</h4>
 
                                     <div className="pt-2">
                                         <p>About us</p>
@@ -231,7 +239,9 @@ class Landing extends Component {
                                 </Col>
                             </Row>
 
-                        <div className="d-flex justify-content-between">
+                        <div className="d-flex flex-column 
+                        flex-xl-row flex-xxl-row flex-lg-row flex-md-row 
+                        justify-content-between align-items-center">
                             <div>
                                 <p>&copy; {new Date().getFullYear()} Open Ride Inc.</p>
                             </div>
@@ -243,7 +253,8 @@ class Landing extends Component {
                                 <FaInstagram />
                             </div>
 
-                            <div className="d-flex">
+                            <div className="d-flex flex-lg-row pt-xl-0 pt-xxl-0 pt-md-1
+                            flex-sm-column pt-4 pt-lg-0">
                                 <p className="pe-4">Privacy</p>
                                 <p className="pe-4">Terms</p>
                                 <p>
