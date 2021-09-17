@@ -134,15 +134,17 @@ class Landing extends Component {
                     </div>
                 </div>
                 <div className="landing-driver-banner">
-                    <div className="landing-driver-banner container d-flex flex-row justify-content-center">
+                    <div className="landing-driver-banner container d-flex flex-column 
+                    flex-lg-row flex-xl-row flex-md-row flex-xxl-row justify-content-center 
+                    pt-2 pb-2 pt-lg-4 pb-lg-4 pt-xl-4 pt-xxl-4 pb-xl-4 pb-xxl-4">
 
-                        <div className="p-4  align-self-center">
-                            <h2 className="text-white">Make money on Open Ride</h2>
-                            <p className="text-white">Are u a driver or a car owner, start making money on Open Ride</p>
+                        <div className="pt-4 p-lg-4 p-xl-4 p-xxl-4 p-md-4 align-self-center">
+                            <h2 className="text-white text-center text-md-start text-lg-start text-xl-start text-xxl-start">Make money on Open Ride</h2>
+                            <p className="text-white text-center text-md-start text-lg-start text-xl-start text-xxl-start">Are u a driver or a car owner, start making money on Open Ride</p>
                         </div>
                         
-                        <div className="p-4 align-self-center">
-                            <button type="button" className="btn btn-light rounded-0 p-3">
+                        <div className="pb-4 p-md-4 p-lg-4 p-xl-4 p-xxl-4 align-self-center">
+                            <button type="button" className="btn btn-light rounded-1 p-2 p-md-3 p-lg-3 p-xl-3 p-xxl-3">
                                 <a href="/register" 
                                 className="text-black pe-2 ps-2 fw-bold text-decoration-none text-uppercase">
                                     Get Started
