@@ -1,6 +1,5 @@
 .top-banner {
     width: 100%;
-    height: 600px;
     background-size: cover;
     /* background-image: url('/img/banner-home.jpg'); */
     background-repeat: no-repeat;
@@ -64,9 +63,6 @@
     margin: .75rem;
 }
 
-.landing-nav .nav-item {
-    line-height: 3;
-}
 
 .landing-nav .navbar-brand {
     font-size: 22px !important;
@@ -78,9 +74,7 @@
     color: black;
 }
 
-.landing-nav .nav-item {
-    padding-top: 5px;
-}
+
 
 .landing-caption {
     color: #14AFE7;
@@ -98,27 +92,80 @@
     overflow-x: hidden;
 } */
 
-.fancy-background {
-    overflow-x: clip !important;
-    position: absolute;
-    background-color: #06DEDB;
-    width: 550px;
-    height: 425px;
-    border-radius: 35px;
-    transform: rotate(-10deg);
-    right: -30px;
-    top: -12px;
+.landing-page .navbar-brand {
+    line-height: 3;
 }
 
-.bg-overlay .fancy-background-2 {
-    position: absolute;
-    background-color: #18a8ea0c;
-    width: 540px;
-    height: 500px;
-    border-radius: 35px;
-    right: 30px;
-    top: 80px;
+.landing_phone {
+    background-color: #06DEDB;
+    /* height: 70%; */
 }
+
+/* .landing-page .landing_phone img {
+    padding-top: 20px;
+} */
+
+.landing-caption p {
+    color: black;
+    font-size: 1em;
+}
+
+/* .landing-caption {
+    background-color: #18a8ea0c;
+} */
+
+@media only screen and (min-width: 768px) {
+    .top-banner {
+        height: 600px;
+    }
+
+    .landing-nav .nav-item {
+        padding-top: 5px;
+    }
+    
+    .landing-nav .nav-item {
+        line-height: 3;
+    }
+    .fancy-background {
+        overflow-x: clip !important;
+        position: absolute;
+        background-color: #06DEDB;
+        width: 550px;
+        height: 425px;
+        border-radius: 35px;
+        transform: rotate(-10deg);
+        right: -30px;
+        top: -12px;
+    }
+
+    .bg-overlay .fancy-background-2 {
+        position: absolute;
+        background-color: #18a8ea0c;
+        width: 540px;
+        height: 500px;
+        border-radius: 35px;
+        right: 30px;
+        top: 80px;
+    }
+
+    .landing_phone {
+        z-index: 9999;
+    }
+
+    .landing_phone img {
+        position: absolute;
+        right: 150px;
+        top: 81px;
+        height: 501px;
+        width: 250px;
+    }
+
+    .landing-caption p {
+        width: 50%;
+    }
+
+}
+
 
 .nav-right {
     z-index: 9999;
@@ -132,17 +179,7 @@
     font-weight: 500;
 }
 
-.landing_phone {
-    z-index: 9999;
-}
 
-.landing_phone img {
-    position: absolute;
-    right: 150px;
-    top: 81px;
-    height: 501px;
-    width: 250px;
-}
 
 .landing-page {
     overflow-x: hidden;
@@ -165,4 +202,13 @@
 
 .landing-page .footer .socials svg {
     margin-right: 15px;
+}
+
+.navbar-toggler,
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler-icon:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }

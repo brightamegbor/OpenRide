@@ -67,57 +67,62 @@ class Landing extends Component {
     render() {
         return (
             <div className="landing-page">
-                <Navbar className="container landing-nav">
+                <Navbar className="container landing-nav" expand="lg">
                     <Navbar.Brand href="/">
                         Open Ride
                     </Navbar.Brand>
-                    <Nav
-                        activeKey="/"
-                        className="me-auto"
-                    >
-                        <Nav.Item>
-                            <Nav.Link eventKey="link-1">Sign up</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="link-2">Log in</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="register-driver">
-                                Register as a driver
-                            </Nav.Link>
-                        </Nav.Item>
-                    </Nav>
+                    <Navbar.Toggle aria-controls="landing-navbar" />
+                    <Navbar.Collapse id="landing-navbar">
 
-                    <Nav className="ms-auto nav-right">
-                        <Nav.Item>
-                            <Nav.Link eventKey="about-us">
-                                About us
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="how it works">
-                                How Open Ride works
-                            </Nav.Link>
-                        </Nav.Item>
-                    </Nav>
+                        <Nav
+                            activeKey="/"
+                            className="me-auto"
+                        >
+                            <Nav.Item>
+                                <Nav.Link eventKey="link-1">Sign up</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link eventKey="link-2">Log in</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link eventKey="register-driver">
+                                    Register as a driver
+                                </Nav.Link>
+                            </Nav.Item>
+                        </Nav>
 
+                        <Nav className="ms-auto nav-right">
+                            <Nav.Item>
+                                <Nav.Link eventKey="about-us">
+                                    About us
+                                </Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link eventKey="how it works">
+                                    How Open Ride works
+                                </Nav.Link>
+                            </Nav.Item>
+                        </Nav>
+
+                        
+                    </Navbar.Collapse>
                 </Navbar>
 
                 <div className="top-banner full-width">
-                    <div className="bg-overlay d-flex">
-                        <div className="container landing-caption d-flex flex-column justify-content-center h-100">
+                    <div className="bg-overlay d-flex flex-column flex-md-row flex-lg-row flex-xl-row flex-xxl-row">
+                        <div className="container landing-caption d-flex flex-column justify-content-center">
                             <h5 className="text-uppercase">
                                 <strong>Affordable fast ride</strong>
                             </h5>
 
-                            <p className="text-wrap">Do you want a taxi, or a private car,
-                            or perhaps you want a car to move your luggages. <br/> Maybe you want
+                            <p className="text-wrap text-center text-md-start text-lg-start text-xl-start text-xxl-start">Do you want a taxi, or a private car,
+                            or perhaps you want a car to move your luggages. Maybe you want
                             to order a ride, for special purposes just sign up.
                             </p>
 
-                            <div>
+                            <div className="text-center text-md-start text-lg-start text-xl-start text-xxl-start">
                                 <button type="button" className="btn btn-dark rounded">
-                                    <a href="/register" className="p-lg-3 text-white text-decoration-none">
+                                    <a href="/register" className="p-3 p-lg-3 text-white text-decoration-none">
                                         Ride
                                     </a>
                                 </button>
@@ -128,8 +133,10 @@ class Landing extends Component {
                             <div className="fancy-background"></div>
                         </div>
                         <div className="fancy-background-2"></div>
-                        <div className="landing_phone">
-                            <img src="images/landing_phone.png" alt="phone with map" />
+                        <div className="landing_phone d-flex d-lg-block justify-content-center 
+                        mt-4 mt-lg-0 mt-xl-0 mt-md-0 mt-xxl-0 pt-4 pb-4 pt-lg-0 pt-xl-0 pt-md-0 pt-xxl-0
+                        pb-lg-0 pb-md-0 pb-xl-0 pb-xxl-0">
+                            <img className=" align-self-center" src="images/landing_phone.png" alt="phone with map" />
                         </div>
                     </div>
                 </div>
@@ -195,7 +202,7 @@ class Landing extends Component {
 
                    <footer className="footer">
                         <Container className="mb-3 mt-5 pt-5">
-                            <Row className="mb-5 ps-3 ps-lg-0 ps-xl-0">
+                            <Row className="mb-5 ps-2 ps-lg-0 ps-xl-0">
                                 <Col lg={4} md="auto" sm={12}>
                                     <h2>Open Ride</h2>
 
