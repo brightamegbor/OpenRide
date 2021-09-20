@@ -109,7 +109,7 @@ class Landing extends Component {
                 </Navbar>
 
                 <div className="top-banner full-width">
-                    <div className="bg-overlay d-flex flex-column flex-md-row flex-lg-row flex-xl-row flex-xxl-row">
+                    <div className="bg-overlay d-flex flex-column flex-md-column flex-lg-row flex-xl-row flex-xxl-row">
                         <div className="container landing-caption d-flex flex-column justify-content-center">
                             <h5 className="text-uppercase">
                                 <strong>Affordable fast ride</strong>
@@ -134,8 +134,8 @@ class Landing extends Component {
                         </div>
                         <div className="fancy-background-2"></div>
                         <div className="landing_phone d-flex d-lg-block justify-content-center 
-                        mt-4 mt-lg-0 mt-xl-0 mt-md-0 mt-xxl-0 pt-4 pb-4 pt-lg-0 pt-xl-0 pt-md-0 pt-xxl-0
-                        pb-lg-0 pb-md-0 pb-xl-0 pb-xxl-0">
+                        mt-4 mt-lg-0 mt-xl-0 mt-md-4 mt-xxl-0 pt-4 pb-4 pt-lg-0 pt-xl-0 pt-md-4 pt-xxl-0
+                        pb-lg-0 pb-md-4 pb-xl-0 pb-xxl-0">
                             <img className=" align-self-center" src="images/landing_phone.png" alt="phone with map" />
                         </div>
                     </div>
@@ -153,7 +153,7 @@ class Landing extends Component {
                         <div className="pb-4 p-md-4 p-lg-4 p-xl-4 p-xxl-4 align-self-center">
                             <button type="button" className="btn btn-light rounded-1 p-2 p-md-3 p-lg-3 p-xl-3 p-xxl-3">
                                 <a href="/register" 
-                                className="text-black pe-2 ps-2 fw-bold text-decoration-none text-uppercase">
+                                className="text-black pe-2 ps-2 ps-md-1 pe-md-1 fw-bold text-decoration-none text-uppercase">
                                     Get Started
                                 </a>
                             </button>
@@ -165,7 +165,7 @@ class Landing extends Component {
 
                 <Container className="mb-3 mt-5 pt-5">
                     <Row className="mb-5 ">
-                        <Col lg={4} md="auto" sm={12}>
+                        <Col lg={4} md={4} sm={12}>
                             <Card className="text-center mb-3">
                                 <h4>Take Open Ride with you</h4>
                                 Open Ride comes with mobile and desktop apps
@@ -175,7 +175,7 @@ class Landing extends Component {
                             </Card>
                         </Col>
 
-                        <Col lg={4} md="auto" sm={12}>
+                        <Col lg={4} md={4} sm={12}>
                             <Card className="text-center mb-3">
                                 <h4>Get a ride within seconds</h4>
                                 Getting the right driver is made easier with OR
@@ -187,7 +187,7 @@ class Landing extends Component {
                             </Card>
                         </Col>
 
-                        <Col lg={4} md="auto" sm={12}>
+                        <Col lg={4} md={4} sm={12}>
                             <Card className="text-center mb-3">
                                 <h4>Priority on the user</h4>
                                 All your transport problem, solved
@@ -203,7 +203,7 @@ class Landing extends Component {
                    <footer className="footer">
                         <Container className="mb-3 mt-5 pt-5">
                             <Row className="mb-5 ps-2 ps-lg-0 ps-xl-0">
-                                <Col lg={4} md="auto" sm={12}>
+                                <Col lg={4} md={4} sm={12}>
                                     <h2>Open Ride</h2>
 
                                     <div className="pt-5">
@@ -217,7 +217,7 @@ class Landing extends Component {
                                     </div>
                                 </Col>
 
-                                <Col lg={4} md="auto" sm={12}>
+                                <Col lg={4} md={4} sm={12}>
                                     <h4 className="pt-4 pt-lg-0 pt-md-0 pt-xl-0 pt-xxl-0">
                                         Products
                                     </h4>
@@ -233,7 +233,7 @@ class Landing extends Component {
                                     </div>
                                 </Col>
 
-                                <Col lg={4} md="auto" sm={12}>
+                                <Col lg={4} md={4} sm={12}>
                                     <h4 className="pt-4 pt-lg-0 pt-md-0 pt-xl-0 pt-xxl-0">About</h4>
 
                                     <div className="pt-2">
@@ -262,8 +262,8 @@ class Landing extends Component {
                                 <FaInstagram />
                             </div>
 
-                            <div className="d-flex flex-lg-row pt-xl-0 pt-xxl-0 pt-md-1
-                            flex-sm-column pt-4 pt-lg-0">
+                            <div className="d-flex flex-row flex-lg-row pt-xl-0 pt-xxl-0 pt-md-1
+                             pt-4 pt-lg-0">
                                 <p className="pe-4">Privacy</p>
                                 <p className="pe-4">Terms</p>
                                 <p>
