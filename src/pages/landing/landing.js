@@ -24,10 +24,6 @@ class Landing extends Component {
         this.currentLocation();
     }
 
-    componentWillUnmount() {
-        
-    }
-
     currentLocation = async () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -85,7 +81,7 @@ class Landing extends Component {
                                 <Nav.Link eventKey="link-2">Log in</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey="register-driver">
+                                <Nav.Link href="/register-driver" eventKey="register-driver">
                                     Register as a driver
                                 </Nav.Link>
                             </Nav.Item>

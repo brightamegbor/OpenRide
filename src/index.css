@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+html, body {
+  font-family: 'Exo', sans-serif !important;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;

@@ -1,0 +1,58 @@
+.register-driver-form {
+    /* margin-top: 100px; */
+    /* width: 370px; */
+    box-shadow: 0px 2px 3px rgb(199, 199, 199)
+}
+
+.register-driver-form h3 {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.register-driver-form input {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: grey;
+}
+
+.register-driver-form label {
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.already-account-driver {
+    height: 52px;
+    /* display: flex; */
+}
+
+.already-account-driver p {
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.country-prefix {
+    position: absolute;
+    left: 10px;
+    top: 7px;
+    z-index: 10;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+.password-visibility {
+    position: absolute;
+    right: 15px;
+    top: 7px;
+    z-index: 10;
+}
+
+.phone-field {
+    padding-left: 60px;
+}
+
+.password-field {
+    padding-right: 60px;
+}
+
+.register-driver-privacy {
+    font-size: 0.8em;
+}
