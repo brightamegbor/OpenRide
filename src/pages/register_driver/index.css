@@ -5,19 +5,32 @@
 }
 
 .register-driver-form h3 {
-    font-size: 1.2em;
+    font-size: 1.0em;
     font-weight: 600;
 }
 
 .register-driver-form input {
-    font-size: 0.8em;
+    font-size: 0.7em;
     font-weight: 600;
     color: grey;
 }
 
-.register-driver-form label {
-    font-size: 0.8em;
+.register-driver-form label, select {
+    font-size: 0.7em !important;
+    font-weight: 600 !important;
+}
+
+.register-driver-form button {
+    background-color: #14AFE7;
+    border-color: #14AFE7;
     font-weight: 600;
+    font-size: 0.7em;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.register-driver-form a {
+    color: #14AFE7;
 }
 
 .already-account-driver {
@@ -26,7 +39,7 @@
 }
 
 .already-account-driver p {
-    font-size: 0.8em;
+    font-size: 0.7em;
     font-weight: 500;
 }
 
@@ -35,18 +48,18 @@
     left: 10px;
     top: 7px;
     z-index: 10;
-    font-size: 0.8em;
+    font-size: 0.7em;
     font-weight: 600;
 }
 .password-visibility {
     position: absolute;
     right: 15px;
-    top: 7px;
+    top: 2px;
     z-index: 10;
 }
 
 .phone-field {
-    padding-left: 60px;
+    padding-left: 50px;
 }
 
 .password-field {
@@ -54,5 +67,130 @@
 }
 
 .register-driver-privacy {
-    font-size: 0.8em;
+    font-size: 0.7em;
+    line-height: 1px;
+}
+
+.register-driver-footer p {
+    font-size: 0.7em;
+}
+
+.register-driver-footer {
+    margin-bottom: -15px;
+}
+
+.rd-rgp a {
+    text-decoration: none;
+    color: white;
+    /* display: flex; */
+    position: absolute;
+    right: 34px;
+    top: 40px !important;
+    font-weight: 700;
+    font-size: 0.7em;
+    background-color: rgb(41, 41, 41);
+    padding: 5px 13px;
+    border-radius: 3px;
+    /* margin-bottom: 20px; */
+    z-index: 10;
+}
+
+@media only screen and (max-width: 320px) {
+    .rd-rgp a {
+        top: 8px !important;
+        margin-left: 5em;
+        left: 8.5em;
+        display: block !important;
+        position: relative;
+    }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1280px) {
+    .register-driver-form h3 {
+        font-size: 1.2em;
+    }
+
+    .register-driver-form label, input, select, .country-prefix {
+        font-size: 0.8em !important;
+    }
+
+    .phone-field {
+        padding-left: 60px;
+    }
+
+    .register-driver-form button {
+        font-size: 0.9em;
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+
+    .already-account-driver p {
+        font-size: 0.8em;
+    }
+
+    .register-driver-privacy {
+        font-size: 0.8em;
+    }
+
+    .register-driver-form{
+        margin-top: 50px !important;
+    }
+
+    .rd-rgp a {
+        text-decoration: none;
+        color: white;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        font-weight: 700;
+        font-size: 1.0em;
+        background-color: black;
+        padding: 5px 20px;
+        border-radius: 25px;
+    }
+}
+
+@media only screen and (min-width: 1281px) {
+    .register-driver-form h3 {
+        font-size: 1.2em;
+    }
+
+    .register-driver-form label, input, select, .country-prefix {
+        font-size: 0.8em !important;
+    }
+
+    .phone-field {
+        padding-left: 60px;
+    }
+
+    .register-driver-form button {
+        font-size: 0.9em;
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+
+    .already-account-driver p {
+        font-size: 0.8em;
+    }
+
+    .register-driver-privacy {
+        font-size: 0.8em;
+    }
+
+    .register-driver-form{
+        margin-top: 40px !important;
+    }
+
+    .rd-rgp a {
+        text-decoration: none;
+        color: white;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        font-weight: 700;
+        font-size: 1.0em;
+        background-color: black;
+        padding: 5px 20px;
+        border-radius: 25px;
+    }
 }
