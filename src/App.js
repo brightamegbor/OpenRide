@@ -7,7 +7,7 @@ import Routes from './routes';
 class App extends Component {
   render() {
     return (
-      <BrowserRouter>
+      <BrowserRouter >
         <Routes />
       </BrowserRouter>
     );

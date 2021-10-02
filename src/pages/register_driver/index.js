@@ -10,6 +10,11 @@ import {
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import { saveUserForm } from "../../services/localStorage";
+import * as uuid from 'uuid';
+import { useHistory } from "react-router-dom";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Box from '@material-ui/core/Box';
 
 /// validation
 const schema = yup.object({
@@ -24,10 +29,26 @@ const schema = yup.object({
 
 const RegisterDriver = () => {
     const [obsecureText, setObsecureText] = useState(true);
-    const saveContactsForm = data => console.log(data);
+    const [isLoading, setIsLoading] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     });
+
+    let history = useHistory();
+
+    function saveContactsForm(data) {
+        setIsLoading(true);
+        var _namespace = uuid.v1().replaceAll("-", "");
+        var newData = Object.assign({}, data);
+        newData['onboardingID'] = _namespace;
+
+        saveUserForm("Driver-contacts", newData);
+
+        setIsLoading(false);
+
+        // history.push(`/register-driver/onboarding/${_namespace}`);
+        return true;
+    }
 
     return(
         <Fragment>
@@ -69,8 +90,8 @@ const RegisterDriver = () => {
 
                                 <Form.Group className="mb-3">
                                     <Form.Label>City</Form.Label>
-                                    <select {...register("city")} className="form-control" aria-label="Default select example">
-                                        <option disabled>Select city</option>
+                                    <select {...register("city")} className="form-control" aria-label="Default select">
+                                        <option value="" disabled>Select city</option>
                                         <option value="Accra">Accra</option>
                                         <option value="Kumasi">Kumasi</option>
                                         <option value="Cape Coast">Cape Coast</option>
@@ -96,7 +117,13 @@ const RegisterDriver = () => {
                                 <div className="d-flex">
                                     <div>
                                         <Button type="submit">
-                                            Next
+                                            {
+                                                isLoading === false ? "Next"
+                                                : 
+                                                <Box sx={{ display: 'flex' }}>
+                                                    <CircularProgress size="25px" color="inherit" />
+                                                </Box>
+                                            }
                                         </Button>
                                     </div>
 
@@ -132,7 +159,6 @@ const RegisterDriver = () => {
             </div>
         </Fragment>
     )
-
 };
 
 export default RegisterDriver

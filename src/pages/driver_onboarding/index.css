@@ -1,0 +1,46 @@
+.propTypebtn {
+    background-color: transparent !important;
+}
+
+.propTypebtn button {
+    width: 180px !important;
+    margin-right: 1.2rem !important;
+    background-color: #fff !important;
+    padding: 1rem !important;
+    height: 60px !important;
+    text-transform: capitalize !important;
+    font-weight: 550 !important;
+}
+
+.propTypebtn .MuiToggleButton-root.Mui-selected {
+    color: #fff !important;
+    background-color: #3f87ff !important;
+}
+
+.propSubTypebtn button {
+    /* width: 80px !important; */
+    height: 30px !important;
+    border-radius: 5rem !important;
+    padding: 0 !important;
+    font-size: x-small !important;
+}
+
+.custom-ml-auto {
+    width: 250px !important;
+    margin-left: auto !important;
+}
+
+.custom-upload-btn {
+    width: 420px !important;
+    background-color: transparent !important;
+    height: 200px !important;
+    box-shadow: none !important;
+    border: 1px #c1baba solid !important;
+    text-transform: capitalize !important;
+}
+
+
+.custom-upload-icon {
+    font-size: 50px !important;
+    color: grey !important;
+}
