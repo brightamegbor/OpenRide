@@ -10,7 +10,7 @@ import {
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { saveUserForm } from "../../../services/localStorage";
+import LocalStorage from "../../../services/localStorage";
 import * as uuid from 'uuid';
 import { useHistory } from "react-router-dom";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -38,36 +38,46 @@ const RegisterDriver = () => {
 
     let history = useHistory();
 
+    const [errorMessage, setErrorMessage] = useState("");
+
     async function saveContactsForm(data) {
         setIsLoading(true);
+        setErrorMessage("");
+        var _namespace = uuid.v1().replaceAll("-", "");
 
         await signUpWithEmail(data.email, data.password).then(async (result) => {
             console.log(result);
 
-            var _namespace = uuid.v1().replaceAll("-", "");
             var newData = Object.assign({}, data);
+            if(result.uid != null) {
             newData['onboardingID'] = _namespace;
             newData['uid'] = result.uid;
             newData['password'] = "";
             newData['creationTime'] = result.metadata.creationTime;
             newData['emailVerified'] = result.emailVerified;
 
-            saveUserForm("Driver-contacts", newData);
+            LocalStorage.saveUserForm("Driver-contacts", newData);
 
-            if(result.uid != null) {
                 await firebaseCRUDService.saveUserProfile(newData).then(() => {
                     console.log("save success");
+                    LocalStorage.saveBool("isLoggedIn", true);
+
+                    history.push(`/register-driver/onboarding/${_namespace}`);
                 })
                 .catch((error) => {
                     console.log(error);
                 });
+            } else if (result.code != null) {
+                let errorCode = result.code;
+                console.log(result.code);
+                if (errorCode.includes("email-already-in-use")) {
+                    setErrorMessage("Email address already exist, please sign in");
+                }
             }
         });
         
 
         setIsLoading(false);
-
-        // history.push(`/register-driver/onboarding/${_namespace}`);
         return true;
     }
 
@@ -83,6 +93,10 @@ const RegisterDriver = () => {
                         <Card className="p-4 register-driver-form mt-3">
 
                             <h3 className="mb-3">Open Ride | Register as a driver</h3>
+
+                            {/* error message */}
+                            <small className="text-danger">{errorMessage}</small>
+                            
                             <Form onSubmit={handleSubmit(saveContactsForm)} className="">
                                 <Form.Group className="mb-3">
                                     <Form.Label>Email</Form.Label>

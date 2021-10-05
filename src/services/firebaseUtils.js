@@ -3,7 +3,8 @@ import {
     createUserWithEmailAndPassword,
     signInWithPhoneNumber,
     RecaptchaVerifier,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    signOut
  } from "firebase/auth";
 
  import firebase from '../firebase';
@@ -39,6 +40,14 @@ export function signInWithEmail(email, password) {
             // const errorMessage = error.message;
             return error;
         });
+}
+
+export function signOutUser() {
+    return new Promise(resolve => signOut(auth)
+        .then((result) => {
+            resolve(result);
+        })
+    )
 }
 
 const appVerifier = window.recaptchaVerifier;
