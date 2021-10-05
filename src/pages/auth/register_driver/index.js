@@ -10,11 +10,13 @@ import {
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { saveUserForm } from "../../services/localStorage";
+import { saveUserForm } from "../../../services/localStorage";
 import * as uuid from 'uuid';
 import { useHistory } from "react-router-dom";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';
+import { signUpWithEmail } from "../../../services/firebaseUtils";
+import firebaseCRUDService from "../../../services/firebaseUtils";
 
 /// validation
 const schema = yup.object({
@@ -36,13 +38,32 @@ const RegisterDriver = () => {
 
     let history = useHistory();
 
-    function saveContactsForm(data) {
+    async function saveContactsForm(data) {
         setIsLoading(true);
-        var _namespace = uuid.v1().replaceAll("-", "");
-        var newData = Object.assign({}, data);
-        newData['onboardingID'] = _namespace;
 
-        saveUserForm("Driver-contacts", newData);
+        await signUpWithEmail(data.email, data.password).then(async (result) => {
+            console.log(result);
+
+            var _namespace = uuid.v1().replaceAll("-", "");
+            var newData = Object.assign({}, data);
+            newData['onboardingID'] = _namespace;
+            newData['uid'] = result.uid;
+            newData['password'] = "";
+            newData['creationTime'] = result.metadata.creationTime;
+            newData['emailVerified'] = result.emailVerified;
+
+            saveUserForm("Driver-contacts", newData);
+
+            if(result.uid != null) {
+                await firebaseCRUDService.saveUserProfile(newData).then(() => {
+                    console.log("save success");
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            }
+        });
+        
 
         setIsLoading(false);
 

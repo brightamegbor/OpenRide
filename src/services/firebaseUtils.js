@@ -6,20 +6,25 @@ import {
     signInWithEmailAndPassword
  } from "firebase/auth";
 
+ import firebase from '../firebase';
+import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
+
 const auth = getAuth();
 
 export function signUpWithEmail(email, password) {
+    return new Promise((resolve) =>
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
             const user = userCredential.user;
-            return user;
+            resolve(user);
         })
         .catch((error) => {
             // const errorCode = error.code;
             // const errorMessage = error.message;
-            return error;
-        });
+            resolve(error);
+        })
+    );
 }
 
 export function signInWithEmail(email, password) {
@@ -65,3 +70,31 @@ export function recaptchaVerify(phoneNumber) {
         }
     }, auth);
 }
+
+// firebase cloud firestore
+const _firestoreUsersDB = getFirestore(firebase);
+const usersCol = collection(_firestoreUsersDB, 'users');
+
+class firebaseCRUDService {
+
+    async saveUserProfile(data) {
+        const userSnapshot = await addDoc(usersCol, data);
+        return userSnapshot;
+    }
+
+    async getAllUserProfile() {
+        const usersSnapshot = await getDocs(usersCol);
+        const usersList = usersSnapshot.docs.map(doc => doc.data());
+        return usersList;
+    }
+
+    updateUserProfile(id, value) {
+        return _firestoreUsersDB.doc(id).update(value);
+    }
+
+    deleteUserProfile(id) {
+        return _firestoreUsersDB.doc(id).delete();
+    }
+}
+
+export default new firebaseCRUDService();

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
-import DriverOnboarding from '../pages/driver_onboarding';
+import RegisterDriver from '../pages/auth/register_driver';
+import DriverOnboarding from '../pages/auth/driver_onboarding';
 import Landing from '../pages/landing/landing';
-import RegisterDriver from '../pages/register_driver';
 
 export default function Routes() {
     return (
