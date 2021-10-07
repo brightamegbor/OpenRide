@@ -1,5 +1,11 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Button, Card, Col, Form, InputGroup, Nav, Navbar, Row, } from "react-bootstrap";
+import { 
+    Button, 
+    Col, Form, 
+    Nav, Navbar, Row,
+    Modal,
+    Image
+} from "react-bootstrap";
 import "./index.css";
 import {
     MdRemoveRedEye
@@ -17,20 +23,57 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';
 import { signUpWithEmail, signOutUser } from "../../../services/firebaseUtils";
 import firebaseCRUDService from "../../../services/firebaseUtils";
+import Slide from '@material-ui/core/Slide';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
+import imageUploadGlobal from '../../../assets/images/profile_photo_upload.png';
 
 /// validation
 const schema = yup.object({
-    email: yup.string().required("This field is required"),
-    mobileNumber: yup.string()
-        .min(10, "Please enter 10 digits phone number")
-        .required("This field is requried"),
-    city: yup.string().required("This field is required"),
-    password: yup.string().required("This field is required"),
+    firstname: yup.string().required("This field is required"),
+    lastname: yup.string().required("This field is required"),
+    // password: yup.string().required("This field is required"),
 
 }).required();
 
+function UploadPhotoModal(props) {
+    return (
+        <Dialog
+            open={props.open}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={props.close}
+            aria-describedby="alert-dialog-slide-description"
+        >
+            <DialogTitle>{"Upload your profile photo"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="upload-description-note" className="fw-bold">
+                    Your profile photo helps people recognise you. Please note that once 
+                    you have submitted your profile photo, it cannot be changed.
+                </DialogContentText>
+
+                <DialogContentText id="upload-description-note">
+                    1. Face the camera and make sure your eyes and mouth are clearly visible <br />
+                    2. Make sure the photo is well lit, free of glare and in focus <br />
+                    3. No photos of a photo, filters or alterations
+                </DialogContentText>
+
+                <div className="text-center">
+                    <Image width="250" height="250" 
+                    alt="upload_global_img" src={imageUploadGlobal} />
+                </div>
+            </DialogContent>
+            <DialogActions>
+                <Button variant="danger" onClick={props.close}>Cancel</Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const DriverOnboarding = () => {
-    const [obsecureText, setObsecureText] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
@@ -41,6 +84,7 @@ const DriverOnboarding = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [userEmail, setUserEmail] = useState("");
     const [loggedIn, setloggedIn] = useState();
+    const [showUploadModal, setShowUploadModal] = React.useState(false);
 
     useEffect(() => {
         initialize();
@@ -132,72 +176,54 @@ const DriverOnboarding = () => {
                 </Navbar.Collapse>
             </Navbar>
 
-            <div className="container d-flex flex-column align-items-center justify-content-center">
+            <div className="container d-flex flex-column align-items-center justify-content-center personal-details">
                 
                 <Row className="">
-                    <Col md={10} sm={10} lg={11}>
+                    <Col md={12} sm={12} lg={12}>
 
-                        <Card className="p-4 register-driver-form mt-3">
+                        <div className="p-4  mt-3">
 
-                            <h3 className="mb-3">Hello,</h3>
+                            <h3 className="mb-2">Hello,</h3>
+                            <small>Complete the required steps below to continue</small>
 
+                            <p className="mb-2"></p>
                             {/* error message */}
                             <small className="text-danger">{errorMessage}</small>
 
                             <Form onSubmit={handleSubmit(saveContactsForm)} className="">
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Email</Form.Label>
-                                    <Form.Control {...register("email")} type="email" placeholder="Enter email address" />
+                                    <Form.Label>First name</Form.Label>
+                                    <Form.Control {...register("firstname")} type="text" placeholder="Enter first name" />
                                     <Form.Text className="text-danger register-driver-privacy">
-                                        {errors.email?.message}
+                                        {errors.firstname?.message}
                                     </Form.Text>
                                 </Form.Group>
 
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Phone number</Form.Label>
-                                    <InputGroup>
-                                        <span className="country-prefix">+233</span>
-                                        <Form.Control {...register("mobileNumber")} className="phone-field" maxLength={10} type="number" placeholder="Enter phone number" />
-
-                                        {/* <FieldControl
-                                            render={TextInput}
-                                            meta={{ label: "Full name", name: "Full name" }}
-                                            id="name"
-                                            name="name" /> */}
-                                    </InputGroup>
+                                    <Form.Label>Last name</Form.Label>
+                                    <Form.Control {...register("lastname")} type="text" placeholder="Enter last name" />
+                                    
                                     <Form.Text className="text-danger register-driver-privacy">
-                                        {errors.mobileNumber?.message}
+                                        {errors.lastname?.message}
                                     </Form.Text>
                                 </Form.Group>
 
                                 <Form.Group className="mb-3">
-                                    <Form.Label>City</Form.Label>
-                                    <select {...register("city")} className="form-control" aria-label="Default select">
-                                        <option value="" disabled>Select city</option>
-                                        <option value="Accra">Accra</option>
-                                        <option value="Kumasi">Kumasi</option>
-                                        <option value="Cape Coast">Cape Coast</option>
-                                    </select>
-                                    <Form.Text className="text-danger register-driver-privacy">
+                                    <Form.Label>Upload your profile photo</Form.Label>
+                                    <Form.Control onClick={() => setShowUploadModal(true)} type="button" value="upload a photo" />
+                                    
+                                    {/* <Form.Text className="text-danger register-driver-privacy">
                                         {errors.city?.message}
-                                    </Form.Text>
+                                    </Form.Text> */}
                                 </Form.Group>
 
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Password</Form.Label>
-                                    <InputGroup>
-                                        <Form.Control {...register("password", { minLength: 8 })} className="password-field" type={obsecureText ? "password" : "text"} placeholder="Enter password" />
-                                        <span onClick={() => setObsecureText(!obsecureText)} className="password-visibility">
-                                            {obsecureText === true ? <MdRemoveRedEye /> : <FaEyeSlash />} </span>
-                                    </InputGroup>
+                                <UploadPhotoModal
+                                    open={showUploadModal}
+                                    close={() => setShowUploadModal(false)}
+                                />
 
-                                    <Form.Text className="text-danger register-driver-privacy">
-                                        {errors.password?.message}
-                                    </Form.Text>
-                                </Form.Group>
-
-                                <div className="d-flex">
-                                    <div>
+                                <div className="d-flex mt-5">
+                                    {/* <div> */}
                                         <Button type="submit">
                                             {
                                                 isLoading === false ? "Next"
@@ -207,37 +233,16 @@ const DriverOnboarding = () => {
                                                     </Box>
                                             }
                                         </Button>
-                                    </div>
-
-                                    <div className="d-flex align-items-center already-account-driver">
-                                        <p className="ms-3 ms-lg-4 ms-md-4 ms-xl-4 ms-xxl-4">Already have an account? <a href="/#">Sign in</a></p>
-                                    </div>
+                                    {/* </div> */}
                                 </div>
-
-                                <Form.Group className="mt-3">
-                                    <Form.Text className="text-muted register-driver-privacy">
-                                        By signing up, I accept Open Ride Terms of Service and Privacy Policy.
-                                    </Form.Text>
-                                </Form.Group>
 
                             </Form>
 
-                        </Card>
+                        </div>
 
 
                     </Col>
                 </Row>
-                <div className="d-flex justify-content-center mt-2 register-driver-footer">
-                    <p className="pe-3">Accessibility</p>
-                    <p className="pe-3">Privacy</p>
-                    <p className="pe-3">Terms</p>
-                </div>
-
-                <div className="d-flex justify-content-center register-driver-footer">
-                    <p className="text-center">&copy; {new Date().getFullYear()} Open Ride Inc. All rights reserved, Open Ride is
-                        unregistered trademark of Bright Amegbor.
-                    </p>
-                </div>
             </div>
         </Fragment>
     )

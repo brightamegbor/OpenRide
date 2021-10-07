@@ -48,3 +48,23 @@
 .sign-out {
     cursor: pointer;
 }
+
+@media only screen and (min-width: 1281px) {
+    .personal-details .row {
+        width: 50%;
+    }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1280px) {
+    .personal-details .row {
+        width: 50%;
+    }
+}
+
+.personal-details button {
+    width: 100% !important;
+}
+
+#upload-description-note {
+    font-size: 0.9em !important;
+}
