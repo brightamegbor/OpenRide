@@ -24,7 +24,7 @@ import Box from '@material-ui/core/Box';
 import { signUpWithEmail, signOutUser } from "../../../services/firebaseUtils";
 import firebaseCRUDService from "../../../services/firebaseUtils";
 import Slide from '@material-ui/core/Slide';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles } from "@material-ui/core";
 import imageUploadGlobal from '../../../assets/images/profile_photo_upload.png';
 
 /// validation
@@ -34,6 +34,7 @@ const schema = yup.object({
     // password: yup.string().required("This field is required"),
 
 }).required();
+
 
 function UploadPhotoModal(props) {
     return (
@@ -60,7 +61,18 @@ function UploadPhotoModal(props) {
                 <div className="text-center">
                     <Image width="250" height="250" 
                     alt="upload_global_img" src={imageUploadGlobal} />
+
                 </div>
+                <div className="text-center mt-4 pt-2 position-relative">
+                    <input type="file" accept="image/*" capture="camera" 
+                        className="upload-image-btn position-absolute opacity-0"
+                        onChange={(e) => { 
+                            props.setPhoto(e.target.files[0]);
+                            props.close()
+                        }} />
+
+                    <Button variant="dark" className="upload-image-btn">Upload image </Button>
+                </div>    
             </DialogContent>
             <DialogActions>
                 <Button variant="danger" onClick={props.close}>Cancel</Button>
@@ -85,6 +97,8 @@ const DriverOnboarding = () => {
     const [userEmail, setUserEmail] = useState("");
     const [loggedIn, setloggedIn] = useState();
     const [showUploadModal, setShowUploadModal] = React.useState(false);
+
+    const [driverPhoto, setDriverPhoto] = useState('');
 
     useEffect(() => {
         initialize();
@@ -210,16 +224,18 @@ const DriverOnboarding = () => {
 
                                 <Form.Group className="mb-3">
                                     <Form.Label>Upload your profile photo</Form.Label>
-                                    <Form.Control onClick={() => setShowUploadModal(true)} type="button" value="upload a photo" />
+                                    <Form.Control onClick={() => setShowUploadModal(true)} 
+                                        type="button" value={driverPhoto !== '' ? driverPhoto.name : "upload a photo"} />
                                     
-                                    {/* <Form.Text className="text-danger register-driver-privacy">
-                                        {errors.city?.message}
+                                    {/* <Form.Text className="">
+                                        {driverPhoto !== '' && driverPhoto.name}
                                     </Form.Text> */}
                                 </Form.Group>
 
                                 <UploadPhotoModal
                                     open={showUploadModal}
                                     close={() => setShowUploadModal(false)}
+                                    setPhoto={(val) => setDriverPhoto(val)}
                                 />
 
                                 <div className="d-flex mt-5">

@@ -9,6 +9,7 @@ import {
 
  import firebase from '../firebase';
 import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
+import { getStorage, ref, uploadBytes  } from "firebase/storage";
 
 const auth = getAuth();
 
@@ -79,6 +80,24 @@ export function recaptchaVerify(phoneNumber) {
         }
     }, auth);
 }
+
+// -- upload to storage --
+export function uploadToStorage(childReference, file) {
+    const metadata = {
+        contentType: 'image/jpeg',
+    };
+
+    const storage = getStorage(firebase);
+    // Create a storage reference from our storage service
+    const storageRef = ref(storage, childReference);
+
+    uploadBytes(storageRef, file, metadata).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+    });
+
+}
+
+// -- end upload to storage --
 
 // firebase cloud firestore
 const _firestoreUsersDB = getFirestore(firebase);
