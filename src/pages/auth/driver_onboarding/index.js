@@ -4,7 +4,8 @@ import {
     Col, Form, 
     Nav, Navbar, Row,
     Modal,
-    Image
+    Image,
+    InputGroup
 } from "react-bootstrap";
 import "./index.css";
 import {
@@ -21,11 +22,12 @@ import * as uuid from 'uuid';
 import { useHistory, Redirect } from "react-router-dom";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';
-import { signUpWithEmail, signOutUser } from "../../../services/firebaseUtils";
+import { uploadImageToStorage, signOutUser } from "../../../services/firebaseUtils";
 import firebaseCRUDService from "../../../services/firebaseUtils";
 import Slide from '@material-ui/core/Slide';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles } from "@material-ui/core";
 import imageUploadGlobal from '../../../assets/images/profile_photo_upload.png';
+import { getDownloadURL } from "firebase/storage";
 
 /// validation
 const schema = yup.object({
@@ -97,8 +99,11 @@ const DriverOnboarding = () => {
     const [userEmail, setUserEmail] = useState("");
     const [loggedIn, setloggedIn] = useState();
     const [showUploadModal, setShowUploadModal] = React.useState(false);
-
+    
     const [driverPhoto, setDriverPhoto] = useState('');
+    const [imgProgress, setImgProgress] = useState(0);
+    
+    const [isPersonalDone, setIsPersonalDone] = useState();
 
     useEffect(() => {
         initialize();
@@ -112,44 +117,77 @@ const DriverOnboarding = () => {
         setUserEmail(_local.email);
     }
 
-    async function saveContactsForm(data) {
+    async function savePersonalForm(data) {
+        if(driverPhoto === '') {
+            return;
+        }
+
         setIsLoading(true);
         setErrorMessage("");
-        var _namespace = uuid.v1().replaceAll("-", "");
 
-        await signUpWithEmail(data.email, data.password).then(async (result) => {
-            console.log(result);
+        var localData = await LocalStorage.getUserForm("Driver-contacts");
+        var userId = localData.uid;
+        var _imageName = driverPhoto.name;
+        _imageName = _imageName.replace(
+            (_imageName.split(".")[0]), 
+            (data.firstname + "_" + data.lastname + "_" + userId.substring(0, 7))
+            .toLowerCase());
 
-            var newData = Object.assign({}, data);
-            if (result.uid != null) {
-                newData['onboardingID'] = _namespace;
-                newData['uid'] = result.uid;
-                newData['password'] = "";
-                newData['creationTime'] = result.metadata.creationTime;
-                newData['emailVerified'] = result.emailVerified;
+        console.log(_imageName);
 
-                LocalStorage.saveUserForm("Driver-contacts", newData);
+        const _uploadImage = uploadImageToStorage("diversprofile", driverPhoto, _imageName);
 
-                await firebaseCRUDService.saveUserProfile(newData).then(() => {
-                    console.log("save success");
-                    LocalStorage.saveBool("isLoggedIn", true);
+        // Listen for state changes, errors, and completion of the upload.
+        _uploadImage.on('state_changed',
+            (snapshot) => {
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                // console.log('Upload is ' + progress + '% done');
+                setImgProgress(progress);
+                // switch (snapshot.state) {
+                //     case 'paused':
+                //         console.log('Upload is paused');
+                //         break;
+                //     case 'running':
+                //         console.log('Upload is running');
+                //         break;
+                // }
+            },
+            (error) => {
+                // A full list of error codes is available at
+                // https://firebase.google.com/docs/storage/web/handle-errors
+                console.log(error.code);
+                // switch (error.code) {
+                //     case 'storage/unauthorized':
+                //         // User doesn't have permission to access the object
+                //         break;
+                //     case 'storage/canceled':
+                //         // User canceled the upload
+                //         console.log(error.code);
+                //         break;
 
-                    history.push(`/register-driver/onboarding/${_namespace}`);
-                })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-            } else if (result.code != null) {
-                let errorCode = result.code;
-                console.log(result.code);
-                if (errorCode.includes("email-already-in-use")) {
-                    setErrorMessage("Email address already exist, please sign in");
-                }
-            }
+                //     // ...
+
+                //     case 'storage/unknown':
+                //         // Unknown error occurred, inspect error.serverResponse
+                //         console.log(error.code);
+                //         break;
+                // }
+            },
+            () => {
+                // Upload completed successfully, now we can get the download URL
+                getDownloadURL(_uploadImage.snapshot.ref).then(async (downloadURL) => {
+                    var newData = Object.assign({}, data);
+                    newData['profile_photo'] = downloadURL;
+
+                    await firebaseCRUDService.updateUserProfile(newData, userId).then(() => {
+                        console.log("save success");
+
+                        setIsLoading(false);
+                        setIsPersonalDone(true);
+                    })
+                });
         });
-
-
-        setIsLoading(false);
         return true;
     }
 
@@ -162,6 +200,114 @@ const DriverOnboarding = () => {
 
     if (loggedIn === false) {
         return <Redirect to="/" />
+    }
+
+    if(isPersonalDone === true) {
+        return (
+            <Fragment>
+                <Navbar className="container landing-nav" expand="lg">
+                    <h4 className="fw-bold">
+                        Open Ride
+                    </h4>
+                    <Navbar.Toggle aria-controls="landing-navbar" />
+                    <Navbar.Collapse id="landing-navbar">
+
+                        <Nav className="me-auto">
+
+                        </Nav>
+
+                        <Nav className="ms-auto nav-right">
+                            <Nav.Item className="pe-3">
+                                {userEmail}
+                            </Nav.Item>
+                            <Nav.Item className="fw-bold sign-out" onClick={() => signoutUser()}>
+                                Sign out
+                            </Nav.Item>
+                        </Nav>
+
+
+                    </Navbar.Collapse>
+                </Navbar>
+
+                <div className="container d-flex flex-column align-items-center justify-content-center personal-details">
+
+                    <Row className="">
+                        <Col md={12} sm={12} lg={12}>
+
+                            <div className="p-4  mt-3">
+
+                                <h3 className="mb-2">Vehicle Information</h3>
+                                <small>Complete the required steps below to continue</small>
+
+                                <p className="mb-2"></p>
+                                {/* error message */}
+                                <small className="text-danger">{errorMessage}</small>
+
+                                <Form onSubmit={handleSubmit(savePersonalForm)} className="">
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>First name</Form.Label>
+                                        <Form.Control {...register("firstname")} type="text" placeholder="Enter first name" />
+                                        <Form.Text className="text-danger register-driver-privacy">
+                                            {errors.firstname?.message}
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Last name</Form.Label>
+                                        <Form.Control {...register("lastname")} type="text" placeholder="Enter last name" />
+
+                                        <Form.Text className="text-danger register-driver-privacy">
+                                            {errors.lastname?.message}
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Upload your profile photo</Form.Label>
+                                        <InputGroup>
+                                            <Form.Control onClick={() => setShowUploadModal(true)}
+                                                type="button" value={
+                                                    driverPhoto !== '' ? driverPhoto.name : "upload a photo"} />
+
+                                            {isLoading === true &&
+                                                <CircularProgress variant="determinate" value={imgProgress} size="25px" color="inherit" />
+                                            }
+                                        </InputGroup>
+
+                                        <Form.Text className="text-danger register-driver-privacy">
+                                            {driverPhoto === '' && "Please attach image"}
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <UploadPhotoModal
+                                        open={showUploadModal}
+                                        close={() => setShowUploadModal(false)}
+                                        setPhoto={(val) => setDriverPhoto(val)}
+                                    />
+
+                                    <div className="d-flex mt-5">
+                                        {/* <div> */}
+                                        <Button type="submit">
+                                            {
+                                                isLoading === false ? "Next"
+                                                    :
+                                                    // <Box sx={{ display: 'flex' }}>
+                                                    <CircularProgress size="25px" color="inherit" />
+                                                // </Box>
+                                            }
+                                        </Button>
+                                        {/* </div> */}
+                                    </div>
+
+                                </Form>
+
+                            </div>
+
+
+                        </Col>
+                    </Row>
+                </div>
+            </Fragment>
+        )
     }
 
     return (
@@ -204,7 +350,7 @@ const DriverOnboarding = () => {
                             {/* error message */}
                             <small className="text-danger">{errorMessage}</small>
 
-                            <Form onSubmit={handleSubmit(saveContactsForm)} className="">
+                            <Form onSubmit={handleSubmit(savePersonalForm)} className="">
                                 <Form.Group className="mb-3">
                                     <Form.Label>First name</Form.Label>
                                     <Form.Control {...register("firstname")} type="text" placeholder="Enter first name" />
@@ -224,12 +370,19 @@ const DriverOnboarding = () => {
 
                                 <Form.Group className="mb-3">
                                     <Form.Label>Upload your profile photo</Form.Label>
+                                    <InputGroup>
                                     <Form.Control onClick={() => setShowUploadModal(true)} 
-                                        type="button" value={driverPhoto !== '' ? driverPhoto.name : "upload a photo"} />
+                                        type="button" value={
+                                            driverPhoto !== '' ? driverPhoto.name : "upload a photo"} />
+
+                                    {isLoading === true &&
+                                            <CircularProgress variant="determinate" value={imgProgress} size="25px" color="inherit" />
+                                    }
+                                    </InputGroup>
                                     
-                                    {/* <Form.Text className="">
-                                        {driverPhoto !== '' && driverPhoto.name}
-                                    </Form.Text> */}
+                                    <Form.Text className="text-danger register-driver-privacy">
+                                        {driverPhoto === '' && "Please attach image"}
+                                    </Form.Text>
                                 </Form.Group>
 
                                 <UploadPhotoModal
@@ -244,9 +397,9 @@ const DriverOnboarding = () => {
                                             {
                                                 isLoading === false ? "Next"
                                                     :
-                                                    <Box sx={{ display: 'flex' }}>
+                                                    // <Box sx={{ display: 'flex' }}>
                                                         <CircularProgress size="25px" color="inherit" />
-                                                    </Box>
+                                                    // </Box>
                                             }
                                         </Button>
                                     {/* </div> */}

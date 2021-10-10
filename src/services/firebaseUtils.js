@@ -8,8 +8,9 @@ import {
  } from "firebase/auth";
 
  import firebase from '../firebase';
-import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
-import { getStorage, ref, uploadBytes  } from "firebase/storage";
+import { getFirestore, collection, 
+    getDocs, addDoc, doc, updateDoc, query, where} from 'firebase/firestore/lite';
+import { getStorage, ref, uploadBytesResumable  } from "firebase/storage";
 
 const auth = getAuth();
 
@@ -82,18 +83,18 @@ export function recaptchaVerify(phoneNumber) {
 }
 
 // -- upload to storage --
-export function uploadToStorage(childReference, file) {
+export function uploadImageToStorage(childReference, file, imageName) {
     const metadata = {
         contentType: 'image/jpeg',
     };
 
     const storage = getStorage(firebase);
     // Create a storage reference from our storage service
-    const storageRef = ref(storage, childReference);
+    const storageRef = ref(storage, "images/" + childReference + "/" + imageName);
 
-    uploadBytes(storageRef, file, metadata).then((snapshot) => {
-        console.log('Uploaded a blob or file!');
-    });
+    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+
+    return uploadTask;
 
 }
 
@@ -116,8 +117,20 @@ class firebaseCRUDService {
         return usersList;
     }
 
-    updateUserProfile(id, value) {
-        return _firestoreUsersDB.doc(id).update(value);
+    async updateUserProfile(data, uid) {
+        const que = query(usersCol, where("uid", "==", uid));
+        const querySnapshot = await getDocs(que);
+        
+        var updateRef;
+        // console.log(uid);
+        // console.log(querySnapshot);
+        querySnapshot.forEach(async (doc) => {
+            updateRef = doc.ref;
+        });
+        const updateTask = await updateDoc(updateRef, data);
+
+
+        return updateTask;
     }
 
     deleteUserProfile(id) {
