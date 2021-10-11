@@ -1,4 +1,5 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, 
+    useEffect, useRef } from "react";
 import { 
     Button, 
     Col, Form, 
@@ -28,6 +29,9 @@ import Slide from '@material-ui/core/Slide';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles } from "@material-ui/core";
 import imageUploadGlobal from '../../../assets/images/profile_photo_upload.png';
 import { getDownloadURL } from "firebase/storage";
+import Select from 'react-select';
+import manufacturers from './cars_manufacturers.json';
+import carColors from './car_colors.json';
 
 /// validation
 const schema = yup.object({
@@ -104,9 +108,18 @@ const DriverOnboarding = () => {
     const [imgProgress, setImgProgress] = useState(0);
     
     const [isPersonalDone, setIsPersonalDone] = useState();
+    
+    const [carManufacturer, setCarManufacturer] = useState('');
+    const [carYear, setCarYear] = useState(2021);
+
+
+    const year = (new Date()).getFullYear();
+    // const years = useRef(["2021", "2020", "2019"]);
+    const years = useRef(Array.from(new Array(21), (val, index) => year - index));
 
     useEffect(() => {
         initialize();
+        console.log(years.current);
     },[]);
 
     async function initialize() {
@@ -202,7 +215,7 @@ const DriverOnboarding = () => {
         return <Redirect to="/" />
     }
 
-    if(isPersonalDone === true) {
+    if(isPersonalDone !== true) {
         return (
             <Fragment>
                 <Navbar className="container landing-nav" expand="lg">
@@ -245,36 +258,58 @@ const DriverOnboarding = () => {
 
                                 <Form onSubmit={handleSubmit(savePersonalForm)} className="">
                                     <Form.Group className="mb-3">
-                                        <Form.Label>First name</Form.Label>
-                                        <Form.Control {...register("firstname")} type="text" placeholder="Enter first name" />
+                                        <Form.Label>Vehicle manufacturer</Form.Label>
+                                        <Select {...register("manufacturer")} className="" 
+                                        // aria-label="Default select"
+                                            name="manufacturer"
+                                            options={manufacturers}
+                                            value={carManufacturer}
+                                            onChange={setCarManufacturer}
+                                            getOptionLabel={(_manufacturer) => _manufacturer.name.toUpperCase()}
+                                            getOptionValue={(_manufacturer) => _manufacturer.name}
+                                             />
+                                        <Form.Text className="text-danger register-driver-privacy">
+                                            {errors.manufacturer?.message}
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Vehicle year</Form.Label>
+                                        <select {...register("city")} className="form-control" aria-label="Default select">
+                                            {
+                                                years.current.map((year, index) => {
+                                                    return <option value={year}>{year}</option>
+                                                })
+                                            }
+                                        </select>
                                         <Form.Text className="text-danger register-driver-privacy">
                                             {errors.firstname?.message}
                                         </Form.Text>
                                     </Form.Group>
 
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Last name</Form.Label>
-                                        <Form.Control {...register("lastname")} type="text" placeholder="Enter last name" />
+                                        <Form.Label>License plate</Form.Label>
+                                        <Form.Control {...register("licensePlate")} type="text" placeholder="Enter license plate" />
 
                                         <Form.Text className="text-danger register-driver-privacy">
-                                            {errors.lastname?.message}
+                                            {errors.licensePlate?.message}
                                         </Form.Text>
                                     </Form.Group>
 
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Upload your profile photo</Form.Label>
-                                        <InputGroup>
-                                            <Form.Control onClick={() => setShowUploadModal(true)}
-                                                type="button" value={
-                                                    driverPhoto !== '' ? driverPhoto.name : "upload a photo"} />
-
-                                            {isLoading === true &&
-                                                <CircularProgress variant="determinate" value={imgProgress} size="25px" color="inherit" />
-                                            }
-                                        </InputGroup>
+                                        <Form.Label>Vehicle color</Form.Label>
+                                        <Select {...register("carColor")} className=""
+                                            // aria-label="Default select"
+                                            name="carColor"
+                                            options={carColors}
+                                            value={carManufacturer}
+                                            onChange={setCarManufacturer}
+                                            getOptionLabel={(carColor) => carColor.name}
+                                            getOptionValue={(carColor) => carColor.value}
+                                        />
 
                                         <Form.Text className="text-danger register-driver-privacy">
-                                            {driverPhoto === '' && "Please attach image"}
+                                            {errors.carColor?.message}
                                         </Form.Text>
                                     </Form.Group>
 
