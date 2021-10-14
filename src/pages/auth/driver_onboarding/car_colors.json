@@ -22,5 +22,41 @@
     {
         "name": "Gold",
         "value": "gold"
+    },
+    {
+        "name": "Gray",
+        "value": "gray"
+    },
+    {
+        "name": "Green",
+        "value": "green"
+    },
+    {
+        "name": "Orange",
+        "value": "orange"
+    },
+    {
+        "name": "Pink",
+        "value": "pink"
+    },
+    {
+        "name": "Purple",
+        "value": "purple"
+    },
+    {
+        "name": "Red",
+        "value": "red"
+    },
+    {
+        "name": "Silver",
+        "value": "silver"
+    },
+    {
+        "name": "White",
+        "value": "white"
+    },
+    {
+        "name": "Yelow",
+        "value": "yelow"
     }
 ]

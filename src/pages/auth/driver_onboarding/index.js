@@ -15,7 +15,7 @@ import {
 import {
     FaEyeSlash
 } from "react-icons/fa";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import LocalStorage from "../../../services/localStorage";
@@ -37,7 +37,20 @@ import carColors from './car_colors.json';
 const schema = yup.object({
     firstname: yup.string().required("This field is required"),
     lastname: yup.string().required("This field is required"),
+    manufacturer: yup.string().required("This field is required"),
+    vehicleYear: yup.string().required("This field is required"),
+    licensePlate: yup.string().required("This field is required"),
+    carColor: yup.string().required("This field is required"),
     // password: yup.string().required("This field is required"),
+
+}).required();
+
+/// validation 2
+const vehicleInfoSchema = yup.object({
+    manufacturer: yup.string().required("This field is required"),
+    vehicleYear: yup.string().required("This field is required"),
+    licensePlate: yup.string().required("This field is required"),
+    carColor: yup.string().required("This field is required"),
 
 }).required();
 
@@ -97,6 +110,10 @@ const DriverOnboarding = () => {
         resolver: yupResolver(schema)
     });
 
+    const { handleSubmit: submitVehicleInfo, control, formState: { errors: vehInfoErrors } } = useForm({
+        resolver: yupResolver(vehicleInfoSchema)
+    });
+
     let history = useHistory();
 
     const [errorMessage, setErrorMessage] = useState("");
@@ -108,9 +125,11 @@ const DriverOnboarding = () => {
     const [imgProgress, setImgProgress] = useState(0);
     
     const [isPersonalDone, setIsPersonalDone] = useState();
+    const [isDriversInfoDone, setIsDriversInfoDone] = useState();
     
-    const [carManufacturer, setCarManufacturer] = useState('');
+    // const [carManufacturer, setCarManufacturer] = useState('');
     const [carYear, setCarYear] = useState(2021);
+    // const [carColor, setCarColor] = useState('');
 
 
     const year = (new Date()).getFullYear();
@@ -119,7 +138,6 @@ const DriverOnboarding = () => {
 
     useEffect(() => {
         initialize();
-        console.log(years.current);
     },[]);
 
     async function initialize() {
@@ -204,6 +222,24 @@ const DriverOnboarding = () => {
         return true;
     }
 
+    async function saveVehicleInfoForm(data) {
+        console.log(data);
+
+        setIsLoading(true);
+        setErrorMessage("");
+
+        var localData = await LocalStorage.getUserForm("Driver-contacts");
+        var userId = localData.uid;
+
+        await firebaseCRUDService.updateUserProfile(data, userId).then(() => {
+            console.log("save success");
+
+            setIsLoading(false);
+            setIsDriversInfoDone(true);
+        })
+        return true;
+    }
+
     async function signoutUser() {
         await signOutUser().then((result) => {
             LocalStorage.saveBool("isLoggedIn", false);
@@ -215,7 +251,7 @@ const DriverOnboarding = () => {
         return <Redirect to="/" />
     }
 
-    if(isPersonalDone !== true) {
+    if(isPersonalDone === true) {
         return (
             <Fragment>
                 <Navbar className="container landing-nav" expand="lg">
@@ -256,18 +292,185 @@ const DriverOnboarding = () => {
                                 {/* error message */}
                                 <small className="text-danger">{errorMessage}</small>
 
-                                <Form onSubmit={handleSubmit(savePersonalForm)} className="">
+                                <Form onSubmit={submitVehicleInfo(saveVehicleInfoForm)} className="">
                                     <Form.Group className="mb-3">
                                         <Form.Label>Vehicle manufacturer</Form.Label>
-                                        <Select {...register("manufacturer")} className="" 
-                                        // aria-label="Default select"
+                                        <Controller
                                             name="manufacturer"
-                                            options={manufacturers}
-                                            value={carManufacturer}
-                                            onChange={setCarManufacturer}
-                                            getOptionLabel={(_manufacturer) => _manufacturer.name.toUpperCase()}
-                                            getOptionValue={(_manufacturer) => _manufacturer.name}
-                                             />
+                                            control={control}
+                                            defaultValue={""}
+                                            // rules={{ required: true }}
+                                            render={({ field: { onChange, value, name, ref }}) =>
+                                            <Select className=""
+                                                ref={ref}
+                                                options={manufacturers}
+                                                value={manufacturers.find(c => c.name === value)}
+                                                onChange={val => onChange(val.name)}
+                                                getOptionLabel={(_manufacturer) => _manufacturer.name.toUpperCase()}
+                                                getOptionValue={(_manufacturer) => _manufacturer.name}
+                                                />
+                                            }
+                                        />
+                                        <Form.Text className="text-danger register-driver-privacy">
+                                            {vehInfoErrors.manufacturer?.message}
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Vehicle year</Form.Label>
+                                        <Controller
+                                            name="vehicleYear"
+                                            control={control}
+                                            defaultValue=""
+                                            render={({ field }) => 
+                                                <select {...field} className="form-control" aria-label="Default select">
+                                                    {
+                                                        years.current.map((year, index) => {
+                                                            return <option key={index} value={year}>{year}</option>
+                                                        })
+                                                    }
+                                                </select>
+                                            }
+                                        />
+                                        {/* <select {...register("vehicleYear")} className="form-control" aria-label="Default select">
+                                            {
+                                                years.current.map((year, index) => {
+                                                    return <option key={index} value={year}>{year}</option>
+                                                })
+                                            }
+                                        </select> */}
+                                        <Form.Text className="text-danger register-driver-privacy">
+                                            {vehInfoErrors.vehicleYear?.message}
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>License plate</Form.Label>
+                                        <Controller
+                                            name="licensePlate"
+                                            control={control}
+                                            defaultValue=""
+                                            render={({ field }) => 
+                                                <Form.Control {...field} type="text" placeholder="Enter license plate" />}
+                                        />
+                                        {/* <Form.Control {...register("licensePlate")} type="text" placeholder="Enter license plate" /> */}
+
+                                        <Form.Text className="text-danger register-driver-privacy">
+                                            {vehInfoErrors.licensePlate?.message}
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Vehicle color</Form.Label>
+                                        <Controller
+                                            name="carColor"
+                                            control={control}
+                                            defaultValue={""}
+                                            render={({ field: { onChange, value, name, ref }}) =>
+                                            <Select className=""
+                                                ref={ref}
+                                                // aria-label="Default select"
+                                                // name={carColor}
+                                                options={carColors}
+                                                value={carColors.find(c => c.value === value)}
+                                                onChange={val => onChange(val.value)}
+                                                getOptionLabel={(_carColor) => _carColor.name}
+                                                getOptionValue={(_carColor) => _carColor.value}
+                                                />
+                                            }
+                                        />
+
+                                        <Form.Text className="text-danger register-driver-privacy">
+                                            {vehInfoErrors.carColor?.message}
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <div className="d-flex mt-5">
+                                        {/* <div> */}
+                                        <Button type={isLoading === false ? "submit" : "null"}>
+                                            {
+                                                isLoading === false ? "Next"
+                                                    :
+                                                    // <Box sx={{ display: 'flex' }}>
+                                                    <CircularProgress size="25px" color="inherit" />
+                                                // </Box>
+                                            }
+                                        </Button>
+                                        {/* </div> */}
+                                    </div>
+
+                                </Form>
+
+                            </div>
+
+
+                        </Col>
+                    </Row>
+                </div>
+            </Fragment>
+        )
+    }
+
+    if(isDriversInfoDone === true) {
+        return (
+            <Fragment>
+                <Navbar className="container landing-nav" expand="lg">
+                    <h4 className="fw-bold">
+                        Open Ride
+                    </h4>
+                    <Navbar.Toggle aria-controls="landing-navbar" />
+                    <Navbar.Collapse id="landing-navbar">
+
+                        <Nav className="me-auto">
+
+                        </Nav>
+
+                        <Nav className="ms-auto nav-right">
+                            <Nav.Item className="pe-3">
+                                {userEmail}
+                            </Nav.Item>
+                            <Nav.Item className="fw-bold sign-out" onClick={() => signoutUser()}>
+                                Sign out
+                            </Nav.Item>
+                        </Nav>
+
+
+                    </Navbar.Collapse>
+                </Navbar>
+
+                <div className="container d-flex flex-column align-items-center justify-content-center personal-details">
+
+                    <Row className="">
+                        <Col md={12} sm={12} lg={12}>
+
+                            <div className="p-4  mt-3">
+
+                                <h3 className="mb-2">Drivers license and document details</h3>
+                                <small>Complete the required steps below to continue</small>
+
+                                <p className="mb-2"></p>
+                                {/* error message */}
+                                <small className="text-danger">{errorMessage}</small>
+
+                                <Form onSubmit={handleSubmit(saveVehicleInfoForm)} className="">
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Vehicle manufacturer</Form.Label>
+                                        <Controller
+                                            name="manufacturer"
+                                            control={control}
+                                            defaultValue={""}
+                                            // rules={{ required: true }}
+                                            render={({ field: { onChange, value, name, ref }}) =>
+                                            <Select className=""
+                                                ref={ref}
+                                                options={manufacturers}
+                                                value={manufacturers.find(c => c.name === value)}
+                                                onChange={val => onChange(val.name)}
+                                                getOptionLabel={(_manufacturer) => _manufacturer.name.toUpperCase()}
+                                                getOptionValue={(_manufacturer) => _manufacturer.name}
+                                                />
+                                            }
+                                        />
                                         <Form.Text className="text-danger register-driver-privacy">
                                             {errors.manufacturer?.message}
                                         </Form.Text>
@@ -275,15 +478,15 @@ const DriverOnboarding = () => {
 
                                     <Form.Group className="mb-3">
                                         <Form.Label>Vehicle year</Form.Label>
-                                        <select {...register("city")} className="form-control" aria-label="Default select">
+                                        <select {...register("vehicleYear")} className="form-control" aria-label="Default select">
                                             {
                                                 years.current.map((year, index) => {
-                                                    return <option value={year}>{year}</option>
+                                                    return <option key={index} value={year}>{year}</option>
                                                 })
                                             }
                                         </select>
                                         <Form.Text className="text-danger register-driver-privacy">
-                                            {errors.firstname?.message}
+                                            {errors.vehicleYear?.message}
                                         </Form.Text>
                                     </Form.Group>
 
@@ -298,26 +501,28 @@ const DriverOnboarding = () => {
 
                                     <Form.Group className="mb-3">
                                         <Form.Label>Vehicle color</Form.Label>
-                                        <Select {...register("carColor")} className=""
-                                            // aria-label="Default select"
+                                        <Controller
                                             name="carColor"
-                                            options={carColors}
-                                            value={carManufacturer}
-                                            onChange={setCarManufacturer}
-                                            getOptionLabel={(carColor) => carColor.name}
-                                            getOptionValue={(carColor) => carColor.value}
+                                            control={control}
+                                            defaultValue={""}
+                                            render={({ field: { onChange, value, name, ref }}) =>
+                                            <Select className=""
+                                                ref={ref}
+                                                // aria-label="Default select"
+                                                // name={carColor}
+                                                options={carColors}
+                                                value={carColors.find(c => c.value === value)}
+                                                onChange={val => onChange(val.value)}
+                                                getOptionLabel={(_carColor) => _carColor.name}
+                                                getOptionValue={(_carColor) => _carColor.value}
+                                                />
+                                            }
                                         />
 
                                         <Form.Text className="text-danger register-driver-privacy">
                                             {errors.carColor?.message}
                                         </Form.Text>
                                     </Form.Group>
-
-                                    <UploadPhotoModal
-                                        open={showUploadModal}
-                                        close={() => setShowUploadModal(false)}
-                                        setPhoto={(val) => setDriverPhoto(val)}
-                                    />
 
                                     <div className="d-flex mt-5">
                                         {/* <div> */}
