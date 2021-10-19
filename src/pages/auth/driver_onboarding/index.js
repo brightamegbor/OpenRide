@@ -31,6 +31,7 @@ import imageUploadGlobal from '../../../assets/images/profile_photo_upload.png';
 import { getDownloadURL } from "firebase/storage";
 import Select from 'react-select';
 import manufacturers from './cars_manufacturers.json';
+import carModels from './cars_models.json';
 import carColors from './car_colors.json';
 
 /// validation
@@ -47,7 +48,8 @@ const schema = yup.object({
 
 /// validation 2
 const vehicleInfoSchema = yup.object({
-    manufacturer: yup.string().required("This field is required"),
+    vehicleManufacturer: yup.string().required("This field is required"),
+    vehicleModel: yup.string().required("This field is required"),
     vehicleYear: yup.string().required("This field is required"),
     licensePlate: yup.string().required("This field is required"),
     carColor: yup.string().required("This field is required"),
@@ -131,6 +133,8 @@ const DriverOnboarding = () => {
     const [carYear, setCarYear] = useState(2021);
     // const [carColor, setCarColor] = useState('');
 
+    const [carModells, setCarModels] = useState([]);
+
 
     const year = (new Date()).getFullYear();
     // const years = useRef(["2021", "2020", "2019"]);
@@ -139,6 +143,28 @@ const DriverOnboarding = () => {
     useEffect(() => {
         initialize();
     },[]);
+
+    function getCarModels(brandName) {
+        var modelList = [];
+        // let carrmodels = carModels;
+        for (let [key, value] of Object.entries(carModels)) {
+            if(brandName.toLowerCase() === value.brand.toLowerCase()) {
+                // console.log(value.brand);
+                let _list = value.models;
+                _list.forEach(function (mod) {
+                    modelList.push({ label: mod, value: mod })
+                });
+                setCarModels(modelList);
+                // console.log(carModells);
+                return;
+            }
+
+        }
+
+        setCarModels(modelList);
+        console.log(carModells);
+
+    }
 
     async function initialize() {
         const _loggedIn = await LocalStorage.getBool("isLoggedIn");
@@ -251,7 +277,8 @@ const DriverOnboarding = () => {
         return <Redirect to="/" />
     }
 
-    if(isPersonalDone === true) {
+    // vehicle info
+    if(isPersonalDone !== true) {
         return (
             <Fragment>
                 <Navbar className="container landing-nav" expand="lg">
@@ -296,7 +323,7 @@ const DriverOnboarding = () => {
                                     <Form.Group className="mb-3">
                                         <Form.Label>Vehicle manufacturer</Form.Label>
                                         <Controller
-                                            name="manufacturer"
+                                            name="vehicleManufacturer"
                                             control={control}
                                             defaultValue={""}
                                             // rules={{ required: true }}
@@ -305,14 +332,41 @@ const DriverOnboarding = () => {
                                                 ref={ref}
                                                 options={manufacturers}
                                                 value={manufacturers.find(c => c.name === value)}
-                                                onChange={val => onChange(val.name)}
+                                                onChange={val => {
+                                                    onChange(val.name)
+                                                    getCarModels(val.name);
+                                                    // console.log(val.name);
+                                                }}
                                                 getOptionLabel={(_manufacturer) => _manufacturer.name.toUpperCase()}
                                                 getOptionValue={(_manufacturer) => _manufacturer.name}
                                                 />
                                             }
                                         />
                                         <Form.Text className="text-danger register-driver-privacy">
-                                            {vehInfoErrors.manufacturer?.message}
+                                            {vehInfoErrors.vehicleManufacturer?.message}
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Vehicle model</Form.Label>
+                                        <Controller
+                                            name="vehicleModel"
+                                            control={control}
+                                            defaultValue={""}
+                                            // rules={{ required: true }}
+                                            render={({ field: { onChange, value, name, ref }}) =>
+                                            <Select className=""
+                                                ref={ref}
+                                                options={carModells}
+                                                value={carModells.find(c => c.value === value)}
+                                                onChange={val => onChange(val.value)}
+                                                // getOptionLabel={carModell => carModell.toUpperCase()}
+                                                // getOptionValue={carModell => carModell}
+                                                />
+                                            }
+                                        />
+                                        <Form.Text className="text-danger register-driver-privacy">
+                                            {vehInfoErrors.vehicleModel?.message}
                                         </Form.Text>
                                     </Form.Group>
 
