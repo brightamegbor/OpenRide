@@ -163,7 +163,7 @@ const RegisterDriver = () => {
                                     </div>
 
                                     <div className="d-flex align-items-center already-account-driver">
-                                        <p className="ms-3 ms-lg-4 ms-md-4 ms-xl-4 ms-xxl-4">Already have an account? <a href="/#">Sign in</a></p>
+                                        <p className="ms-3 ms-lg-4 ms-md-4 ms-xl-4 ms-xxl-4">Already have an account? <a onClick={() => history.push("/login-driver")} href="# ">Sign in</a></p>
                                     </div>
                                 </div>
 

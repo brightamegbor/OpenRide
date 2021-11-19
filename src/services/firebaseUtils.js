@@ -31,17 +31,19 @@ export function signUpWithEmail(email, password) {
 }
 
 export function signInWithEmail(email, password) {
+    return new Promise((resolve) => 
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
             const user = userCredential.user;
-            return user;
+            resolve(user);
         })
         .catch((error) => {
             // const errorCode = error.code;
             // const errorMessage = error.message;
-            return error;
-        });
+            resolve(error);
+        })
+    );
 }
 
 export function signOutUser() {
@@ -109,6 +111,19 @@ class firebaseCRUDService {
     async saveUserProfile(data) {
         const userSnapshot = await addDoc(usersCol, data);
         return userSnapshot;
+    }
+
+    async getDriverUserProfile(email) {
+        const que = query(usersCol, where("email", "==", email));
+        const querySnapshot = await getDocs(que);
+        var userSnapshot;
+
+        querySnapshot.forEach((doc) => {
+            userSnapshot = doc.data()
+        });
+
+        return userSnapshot;
+
     }
 
     async getAllUserProfile() {
