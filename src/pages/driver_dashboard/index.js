@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react"
+import { Fragment, useState, useEffect, useCallback } from "react"
 import { Nav, Navbar } from "react-bootstrap"
 import { signOutUser } from "../../services/firebaseUtils";
 import { Redirect } from "react-router";
@@ -25,6 +25,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/LogoutOutlined';
 import Switch from '@mui/material/Switch';
 import { styled } from '@mui/material/styles';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import './index.css';
+import Locate from "leaflet.locatecontrol"; 
 
 const drawerWidth = 240;
 
@@ -73,7 +76,8 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 const DriverDashboard = (props) => {
     const [userFullName, setUserFullName] = useState("");
     const [loggedIn, setloggedIn] = useState();
-    
+    const [currentLocMap, setCurrentLocMap] = useState({ latitude: 5.55602,  longitude: - 0.1969 });
+
     const { window } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -88,17 +92,48 @@ const DriverDashboard = (props) => {
         })
     }
 
-    async function initialize() {
-        const _loggedIn = await LocalStorage.getBool("isLoggedIn");
-        setloggedIn(_loggedIn);
+    const { map } = useMap();
 
-        const _local = await LocalStorage.getUserForm("UserDetails");
-        setUserFullName(_local.firstname + " " + _local.lastname);
-    }
+    const currentLocation = useCallback(() => {
+        // navigator.geolocation.getCurrentPosition(
+        //     (position) => {
+        //         setCurrentLocMap({
+        //             longitude: position.coords.longitude,
+        //             latitude: position.coords.latitude
+        //         });
+        //         // console.log(currentLocMap.longitude);
+        //     },
+        //     err => console.log(err)
+        // );
+
+        // geo locate props
+        const locateOptions = {
+            position: 'topright',
+            maxZoom: 19,
+            strings: {
+                title: 'Show me where I am, yo!'
+            },
+            onActivate: () => { } // callback before engine starts retrieving locations
+        }
+
+        const lc = new Locate(locateOptions);
+        // console.log(lc);
+        lc.addTo(map);
+    }, [map]);
+
+    const initialize = useCallback(async () => {
+        // const _loggedIn = await LocalStorage.getBool("isLoggedIn");
+        // setloggedIn(_loggedIn);
+
+        // const _local = await LocalStorage.getUserForm("UserDetails");
+        // setUserFullName(_local.firstname + " " + _local.lastname);
+        currentLocation();
+    }, [currentLocation]);
 
     useEffect(() => {
         initialize();
-    }, []);
+    }, [initialize]);
+
 
     if (loggedIn === false) {
         return <Redirect to="/" />
@@ -149,7 +184,6 @@ const DriverDashboard = (props) => {
                             ))}
                         </List>
                     </div>
-
                 </div>
             </Box>
         </Fragment>
@@ -159,47 +193,23 @@ const DriverDashboard = (props) => {
 
     return (
         <Fragment>
-            {/* <Navbar className="container landing-nav" expand="lg">
-                <h4 className="fw-bold">
-                    Open Ride
-                </h4>
-                <Navbar.Toggle aria-controls="landing-navbar" />
-                <Navbar.Collapse id="landing-navbar">
 
-                    <Nav className="me-auto">
-
-                    </Nav>
-
-                    <Nav className="ms-auto nav-right">
-                        <Nav.Item className="pe-3">
-                            {userFullName}
-                        </Nav.Item>
-                        <Nav.Item className="fw-bold sign-out" onClick={() => signoutUser()}>
-                            Sign out
-                        </Nav.Item>
-                    </Nav>
-
-
-                </Navbar.Collapse>
-            </Navbar> */}
-
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex', height: '100vh' }}>
                 <CssBaseline />
                 <AppBar position="fixed" 
                     color="inherit"
-                    elevation="1"
-                sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                    elevation={1}
+                    sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Toolbar>
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"
                             edge="start"
                             onClick={handleDrawerToggle}
-                            sx={{ mr: 2, display: { sm: 'none' } }}
-                        >
+                            sx={{ mr: 2, display: { sm: 'none' } }}>
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h5" noWrap component="div">
+                        <Typography variant="h5" noWrap component="div" onClick={() => currentLocation()}>
                             Open Ride
                         </Typography>
                     </Toolbar>
@@ -215,8 +225,7 @@ const DriverDashboard = (props) => {
                     sx={{
                         display: { xs: 'block', sm: 'none' },
                         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                    }}
-                >
+                    }}>
                     {drawer}
                 </Drawer>
                 <Drawer
@@ -225,18 +234,35 @@ const DriverDashboard = (props) => {
                         display: { xs: 'none', sm: 'block' },
                         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                     }}
-                    open
-                >
+                    open>
                     {drawer}
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                    <Toolbar />
+                <Box component="main" >
+                    <Toolbar className="top-toolbar" />
                     {/* body */}
+                    <div className="MapWrapper" sx={{ flexGrow: 1, }}>
+                        <MapContainer center={
+                            currentLocMap !== undefined
+                                ? [currentLocMap.latitude, currentLocMap.longitude]
+                                : [5.10535, -1.2466]} zoom={14} >
+
+                            <TileLayer
+                                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+
+                            <Marker position={[5.55602, -0.1969]}>
+                                <Popup>
+                                    I am a pop-up!
+                                </Popup>
+                            </Marker>
+                        </MapContainer>
+                        
+                    </div>
                 </Box>
             </Box>
         </Fragment>
     )
-
 }
 
 export default DriverDashboard
