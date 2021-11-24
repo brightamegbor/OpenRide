@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, useCallback } from "react"
-import { Nav, Navbar } from "react-bootstrap"
+// import { Nav, Navbar } from "react-bootstrap"
 import { signOutUser } from "../../services/firebaseUtils";
 import { Redirect } from "react-router";
 import LocalStorage from "../../services/localStorage";
@@ -20,16 +20,87 @@ import MoneyIcon from '@mui/icons-material/MoneyOutlined';
 import NotificationIcon from '@mui/icons-material/NotificationsOutlined'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 import TravelExploreIcon from '@mui/icons-material/TravelExploreOutlined'
-import { IconButton, Stack } from "@mui/material";
+import { IconButton } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/LogoutOutlined';
 import Switch from '@mui/material/Switch';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import './index.css';
-import Locate from "leaflet.locatecontrol"; 
+// import Locate from "leaflet.locatecontrol";
+import L from 'leaflet';
+import MyLocationIcon from '../../assets/icons/my_location_icon.svg';
+import MuiAppBar from '@mui/material/AppBar';
+import MuiDrawer from '@mui/material/Drawer';
 
 const drawerWidth = 240;
+
+const openedMixin = (theme) => ({
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+    }),
+    overflowX: 'hidden',
+});
+
+const closedMixin = (theme) => ({
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+    width: `calc(${theme.spacing(7)} + 1px)`,
+    [theme.breakpoints.up('sm')]: {
+        width: `calc(${theme.spacing(9)} + 1px)`,
+    },
+});
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+}));
+
+const AppBarLarge= styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme, open }) => ({
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    ...(open && {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    }),
+}));
+
+const DrawerLarge = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+    ({ theme, open }) => ({
+        width: drawerWidth,
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+        boxSizing: 'border-box',
+        ...(open && {
+            ...openedMixin(theme),
+            '& .MuiDrawer-paper': openedMixin(theme),
+        }),
+        ...(!open && {
+            ...closedMixin(theme),
+            '& .MuiDrawer-paper': closedMixin(theme),
+        }),
+    }),
+);
 
 const AntSwitch = styled(Switch)(({ theme }) => ({
     width: 28,
@@ -73,16 +144,58 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     },
 }));
 
+function LocationMarker() {
+    const [position, setPosition] = useState(null);
+    const [bbox, setBbox] = useState([]);
+
+    const map = useMap();
+
+    useEffect(() => {
+        map.locate().on("locationfound", function (e) {
+            setPosition(e.latlng);
+            map.flyTo(e.latlng, map.getZoom(),);
+            const radius = e.accuracy;
+            const circle = L.circle(e.latlng, radius, 
+                { fillOpacity: 0.2, stroke: false, radius: 15 });
+            circle.addTo(map);
+            setBbox(e.bounds.toBBoxString().split(","));
+        });
+    }, [map]);
+
+    return position === null ? null : (
+        <Marker position={position} icon={L.icon({
+            iconUrl: MyLocationIcon,
+            className: 'blinking'
+        })}>
+            <Popup>
+                My location <br />
+                Map bbox: <br />
+                <b>Southwest lng</b>: {bbox[0]} <br />
+                <b>Southwest lat</b>: {bbox[1]} <br />
+                <b>Northeast lng</b>: {bbox[2]} <br />
+                <b>Northeast lat</b>: {bbox[3]}
+            </Popup>
+        </Marker>
+    );
+}
+
 const DriverDashboard = (props) => {
     const [userFullName, setUserFullName] = useState("");
     const [loggedIn, setloggedIn] = useState();
-    const [currentLocMap, setCurrentLocMap] = useState({ latitude: 5.55602,  longitude: - 0.1969 });
+    const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0,  longitude: 0 });
 
     const { window } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
 
+    const themelg = useTheme();
+    const [open, setOpen] = useState(false);
+
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
+    };
+
+    const handleDrawerOpenClose = () => {
+        setOpen(!open);
     };
 
     async function signoutUser() {
@@ -92,34 +205,18 @@ const DriverDashboard = (props) => {
         })
     }
 
-    const { map } = useMap();
-
-    const currentLocation = useCallback(() => {
-        // navigator.geolocation.getCurrentPosition(
-        //     (position) => {
-        //         setCurrentLocMap({
-        //             longitude: position.coords.longitude,
-        //             latitude: position.coords.latitude
-        //         });
-        //         // console.log(currentLocMap.longitude);
-        //     },
-        //     err => console.log(err)
-        // );
-
-        // geo locate props
-        const locateOptions = {
-            position: 'topright',
-            maxZoom: 19,
-            strings: {
-                title: 'Show me where I am, yo!'
-            },
-            onActivate: () => { } // callback before engine starts retrieving locations
-        }
-
-        const lc = new Locate(locateOptions);
-        // console.log(lc);
-        lc.addTo(map);
-    }, [map]);
+    // const currentLocation = useCallback(() => {
+    //     navigator.geolocation.getCurrentPosition(
+    //         (position) => {
+    //             setCurrentLocMap({
+    //                 longitude: position.coords.longitude,
+    //                 latitude: position.coords.latitude
+    //             });
+    //             // console.log(currentLocMap.longitude);
+    //         },
+    //         err => console.log(err)
+    //     );
+    // }, []);
 
     const initialize = useCallback(async () => {
         // const _loggedIn = await LocalStorage.getBool("isLoggedIn");
@@ -127,8 +224,8 @@ const DriverDashboard = (props) => {
 
         // const _local = await LocalStorage.getUserForm("UserDetails");
         // setUserFullName(_local.firstname + " " + _local.lastname);
-        currentLocation();
-    }, [currentLocation]);
+        // currentLocation();
+    }, []);
 
     useEffect(() => {
         initialize();
@@ -141,8 +238,8 @@ const DriverDashboard = (props) => {
 
     const drawer = (
         <Fragment>
-            <Toolbar />
-            <Box sx={{ overflow: 'auto', height: '100%' }}>
+            {/* <Toolbar /> */}
+            <Box sx={{ overflow: 'hidden', height: '100%' }}>
                 <div className="d-flex flex-column justify-content-between h-100">
                     <div>
                         <List>
@@ -199,21 +296,49 @@ const DriverDashboard = (props) => {
                 <AppBar position="fixed" 
                     color="inherit"
                     elevation={1}
-                    sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                    sx={{ zIndex: (theme) => theme.zIndex.drawer + 1,
+                        display: { sm: 'none' } }}
+                    >
                     <Toolbar>
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"
                             edge="start"
                             onClick={handleDrawerToggle}
+                            // display: {sm: 'none' }
                             sx={{ mr: 2, display: { sm: 'none' } }}>
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h5" noWrap component="div" onClick={() => currentLocation()}>
+                        <Typography variant="h5" noWrap component="div">
                             Open Ride
                         </Typography>
                     </Toolbar>
                 </AppBar>
+
+                <AppBarLarge position="fixed"
+                    elevation={1}
+                    color="inherit"
+                    sx={{ display: { xs: 'none', sm: 'block'} }}
+                     open={open}>
+                    <Toolbar>
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={handleDrawerOpenClose}
+                            edge="start"
+                            sx={{
+                                marginRight: '36px',
+                                ...(open && { display: 'none' }),
+                            }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <Typography variant="h6" noWrap component="div">
+                            Open Ride
+                        </Typography>
+                    </Toolbar>
+                </AppBarLarge>
+
                 <Drawer
                     container={container}
                     variant="temporary"
@@ -226,36 +351,39 @@ const DriverDashboard = (props) => {
                         display: { xs: 'block', sm: 'none' },
                         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                     }}>
+                    <Toolbar />
                     {drawer}
                 </Drawer>
-                <Drawer
+                <DrawerLarge
                     variant="permanent"
                     sx={{
                         display: { xs: 'none', sm: 'block' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                        // '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                     }}
-                    open>
+                    open={open}>
+                    <DrawerHeader>
+                        <IconButton onClick={handleDrawerOpenClose}>
+                            {themelg.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                        </IconButton>
+                    </DrawerHeader>
+                    <Divider />
                     {drawer}
-                </Drawer>
+                </DrawerLarge>
                 <Box component="main" >
                     <Toolbar className="top-toolbar" />
                     {/* body */}
                     <div className="MapWrapper" sx={{ flexGrow: 1, }}>
                         <MapContainer center={
-                            currentLocMap !== undefined
+                            currentLocMap.latitude !== 0
                                 ? [currentLocMap.latitude, currentLocMap.longitude]
-                                : [5.10535, -1.2466]} zoom={14} >
+                                : [5.10535, -1.2466]} zoom={15} >
 
                             <TileLayer
                                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             />
 
-                            <Marker position={[5.55602, -0.1969]}>
-                                <Popup>
-                                    I am a pop-up!
-                                </Popup>
-                            </Marker>
+                            <LocationMarker />
                         </MapContainer>
                         
                     </div>
