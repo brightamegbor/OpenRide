@@ -71,7 +71,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
 }));
 
-const AppBarLarge= styled(MuiAppBar, {
+const AppBarLarge = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
     zIndex: theme.zIndex.drawer + 1,
@@ -184,7 +184,7 @@ function LocationMarker() {
             setPosition(e.latlng);
             map.flyTo(e.latlng, map.getZoom(),);
             const radius = e.accuracy;
-            const circle = L.circle(e.latlng, radius, 
+            const circle = L.circle(e.latlng, radius,
                 { fillOpacity: 0.2, stroke: false, radius: 15 });
             circle.addTo(map);
             setBbox(e.bounds.toBBoxString().split(","));
@@ -208,10 +208,10 @@ function LocationMarker() {
     );
 }
 
-const DriverDashboard = (props) => {
+const RideDashboard = (props) => {
     const [userFullName, setUserFullName] = useState("");
     const [loggedIn, setloggedIn] = useState();
-    const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0,  longitude: 0 });
+    const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0, longitude: 0 });
 
     const { window } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -308,7 +308,7 @@ const DriverDashboard = (props) => {
                             {['Log out', 'Availability'].map((text, index) => (
                                 <ListItem button key={text} onClick={text === "Log out" ? signoutUser : null}>
                                     <ListItemIcon>
-                                        {index % 2 === 0 ? <LogoutIcon /> 
+                                        {index % 2 === 0 ? <LogoutIcon />
                                             : <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
                                         }
                                     </ListItemIcon>
@@ -329,12 +329,14 @@ const DriverDashboard = (props) => {
 
             <Box sx={{ display: 'flex', height: '100vh' }}>
                 <CssBaseline />
-                <AppBar position="fixed" 
+                <AppBar position="fixed"
                     color="inherit"
                     elevation={1}
-                    sx={{ zIndex: (theme) => theme.zIndex.drawer + 2,
-                        display: { sm: 'none' } }}
-                    >
+                    sx={{
+                        zIndex: (theme) => theme.zIndex.drawer + 2,
+                        display: { sm: 'none' }
+                    }}
+                >
                     <Toolbar>
                         <IconButton
                             color="inherit"
@@ -355,8 +357,8 @@ const DriverDashboard = (props) => {
                 <AppBarLarge position="fixed"
                     elevation={1}
                     color="inherit"
-                    sx={{ display: { xs: 'none', sm: 'block'} }}
-                     open={open}>
+                    sx={{ display: { xs: 'none', sm: 'block' } }}
+                    open={open}>
                     <Toolbar>
                         <IconButton
                             color="inherit"
@@ -393,7 +395,7 @@ const DriverDashboard = (props) => {
                     <Toolbar />
                     {drawer}
                 </Drawer>
-                
+
                 {/* drawer desktop */}
                 <DrawerLarge
                     variant="permanent"
@@ -410,7 +412,7 @@ const DriverDashboard = (props) => {
                     <Divider />
                     {drawer}
                 </DrawerLarge>
-                
+
                 <Box component="main" >
                     <Toolbar className="top-toolbar" />
                     {/* body */}
@@ -427,7 +429,7 @@ const DriverDashboard = (props) => {
 
                             <LocationMarker />
                         </MapContainer>
-                        
+
                     </div>
 
                     <Root sx={{
@@ -461,39 +463,39 @@ const DriverDashboard = (props) => {
                                 display: { xs: 'block', sm: 'none' }
                             }}
                         >
-                        <StyledBox
-                            sx={{
-                                position: 'absolute',
-                                top: -drawerBleeding,
-                                borderTopLeftRadius: 8,
-                                borderTopRightRadius: 8,
-                                visibility: 'visible',
-                                right: 0,
-                                left: 0,
-                                display: { xs: 'block', sm: 'none' }
-                            }}
-                        >
-                            <Puller sx={{
-                                display: { xs: 'block', sm: 'none' }
-                            }} />
+                            <StyledBox
+                                sx={{
+                                    position: 'absolute',
+                                    top: -drawerBleeding,
+                                    borderTopLeftRadius: 8,
+                                    borderTopRightRadius: 8,
+                                    visibility: 'visible',
+                                    right: 0,
+                                    left: 0,
+                                    display: { xs: 'block', sm: 'none' }
+                                }}
+                            >
+                                <Puller sx={{
+                                    display: { xs: 'block', sm: 'none' }
+                                }} />
                                 <Typography sx={{ p: 2, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}>Ride requests (0)</Typography>
-                        </StyledBox>
-                        <StyledBox
-                            sx={{
-                                px: 2,
-                                pb: 2,
-                                height: '100%',
-                                overflow: 'auto',
-                                display: { xs: 'block', sm: 'none' }
-                            }}
-                        >
-                            {/* <Skeleton sx={{
+                            </StyledBox>
+                            <StyledBox
+                                sx={{
+                                    px: 2,
+                                    pb: 2,
+                                    height: '100%',
+                                    overflow: 'auto',
+                                    display: { xs: 'block', sm: 'none' }
+                                }}
+                            >
+                                {/* <Skeleton sx={{
                                 display: { xs: 'block', sm: 'none' }
                             }} variant="rectangular" height="50%" /> */}
 
-                            <Typography>No live request available</Typography>
-                        </StyledBox>
-                    </SwipeableDrawer>
+                                <Typography>No live request available</Typography>
+                            </StyledBox>
+                        </SwipeableDrawer>
                     </Root>
                 </Box>
             </Box>
@@ -501,4 +503,4 @@ const DriverDashboard = (props) => {
     )
 }
 
-export default DriverDashboard
+export default RideDashboard

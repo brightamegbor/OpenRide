@@ -57,21 +57,24 @@ export function signOutUser() {
 const appVerifier = window.recaptchaVerifier;
 
 export function signUpWithPhone(phoneNumber) {
-    // TODO: not complete
+    return new Promise(resolve =>
     signInWithPhoneNumber(auth, phoneNumber, appVerifier)
         .then((confirmationResult) => {
             // SMS sent. Prompt user to type the code from the message, then sign the
             // user in with confirmationResult.confirm(code).
-            window.confirmationResult = confirmationResult;
+            // window.confirmationResult = confirmationResult;
+            resolve(confirmationResult);
             // ...
         }).catch((error) => {
             // Error; SMS not sent
             // ...
-        });
+            resolve(error);
+        })
+    );
 }
 
 export function recaptchaVerify(phoneNumber) {
-    window.recaptchaVerifier = new RecaptchaVerifier('sign-in-button', {
+    window.recaptchaVerifier = new RecaptchaVerifier('phone-next-btn', {
         'size': 'invisible',
         'callback': (response) => {
             // reCAPTCHA solved, allow signInWithPhoneNumber.
@@ -139,9 +142,16 @@ class firebaseCRUDService {
         var updateRef;
         // console.log(uid);
         // console.log(querySnapshot);
-        querySnapshot.forEach(async (doc) => {
-            updateRef = doc.ref;
-        });
+        if (querySnapshot !== undefined) {
+            querySnapshot.forEach(async (doc) => {
+                updateRef = doc.ref;
+            });
+        }
+
+        if (updateRef === undefined) {
+            const createIfNotExit = await this.saveUserProfile(data);
+            updateRef = createIfNotExit;
+        }
         const updateTask = await updateDoc(updateRef, data);
 
 

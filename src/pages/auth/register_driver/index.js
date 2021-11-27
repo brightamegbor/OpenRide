@@ -52,6 +52,7 @@ const RegisterDriver = () => {
             if(result.uid != null) {
             newData['onboardingID'] = _namespace;
             newData['uid'] = result.uid;
+            newData['userType'] = "driver";
             newData['password'] = "";
             newData['creationTime'] = result.metadata.creationTime;
             newData['emailVerified'] = result.emailVerified;
