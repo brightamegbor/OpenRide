@@ -17,7 +17,7 @@ export default function Routes() {
             <Route path="/register-driver/onboarding/:id" exact component={withRouter(DriverOnboarding)} />
             <Route path="/login-driver" exact component={withRouter(LoginDriver)} />
             <Route path="/driver-dashboard" exact component={withRouter(DriverDashboard)} />
-            <Route path="/register-ride" exact component={withRouter(RegisterRide)} />
+            <Route path="/ride" exact component={withRouter(RegisterRide)} />
             <Route path="/ride-home" exact component={withRouter(RideDashboard)} />
             <Route path="/*" exact component={withRouter(NotFoundComponent)} />
         </Switch>

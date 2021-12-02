@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useCallback } from "react"
+import { Fragment, useState, useEffect, useCallback, useRef } from "react"
 // import { Nav, Navbar } from "react-bootstrap"
 import { signOutUser } from "../../services/firebaseUtils";
 import { Redirect } from "react-router";
@@ -20,7 +20,7 @@ import MoneyIcon from '@mui/icons-material/MoneyOutlined';
 import NotificationIcon from '@mui/icons-material/NotificationsOutlined'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 import TravelExploreIcon from '@mui/icons-material/TravelExploreOutlined'
-import { IconButton } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/LogoutOutlined';
 import Switch from '@mui/material/Switch';
@@ -43,6 +43,13 @@ import Skeleton from '@mui/material/Skeleton';
 import { grey } from '@mui/material/colors';
 import { Global } from '@emotion/react';
 import { Form, InputGroup } from "react-bootstrap";
+import { getAuth } from "firebase/auth";
+import { useHistory, } from "react-router-dom";
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField'; 
+import { OpenStreetMapProvider } from 'leaflet-geosearch'; 
+import * as ELG from "esri-leaflet-geocoder";
+
 
 const drawerWidth = 240;
 
@@ -213,6 +220,120 @@ function LocationMarker() {
     );
 }
 
+function RequestForm() {
+    const [addressSuggestions, setAddressSuggestions] = useState([]);
+    const [myLocSuggLoading, setMyLocSugLoading] = useState(false);
+    const [destSuggLoading, setDestSugLoading] = useState(false);
+    const [myLocValue, setMyLocValue] = useState("");
+
+    const opsProvider = useRef();
+    const myLocationRef = useRef();
+    const destinationRef = useRef();
+
+    const fetchAdd = () => {
+        var lat = 5.10535;
+        var lng = -1.2466;
+        const nominatimURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng + "&zoom=15";
+        // fetch lat and long and use it with leaflet
+        fetch(nominatimURL)
+            .then(response => response.json())
+            .then(async data => {
+                await setMyLocValue(data.address.city);
+                console.log(data.address.city);
+            })
+    }
+
+    useEffect(() => {
+        opsProvider.current = new OpenStreetMapProvider({
+            params: {
+                'accept-language': 'en',
+                countrycodes: "gh"
+            }
+        });
+
+        fetchAdd();
+        
+    }, []);
+
+    const fetchAddrSuggestions = (e, { inputName = "" }) => {
+        if (inputName === "my") {
+            setMyLocSugLoading(true);
+        } else {
+            setDestSugLoading(true);
+        }
+
+        var input = e.target.value;
+
+        opsProvider.current.search({ query: input}).then(async (results) => {
+            await setAddressSuggestions([]);
+            await setAddressSuggestions(results);
+
+            if (inputName === "my") {
+                setMyLocSugLoading(false);
+            } else {
+                setDestSugLoading(false);
+            }
+        });
+    }
+
+    return (
+        <Fragment>
+            <p className="pt-1"></p>
+            <Autocomplete
+                freeSolo
+                id="free-solo-2-demo"
+                disableClearable
+                options={addressSuggestions.map((option) => option.label)}
+                inputValue={myLocValue}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Pick-up location"
+                        variant="filled"
+                        InputProps={{
+                            ...params.InputProps,
+                            type: 'search',
+                            endAdornment: (
+                                <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
+                                    {myLocSuggLoading && <CircularProgress size="25px" color="inherit" />}
+                                </Box>
+                            ),
+                        }}
+                        onChange={(e) => fetchAddrSuggestions(e, {inputName: "my"})}
+                        ref={myLocationRef}
+                    />
+                )}
+            />
+
+            <p className="pt-2"></p>
+            <Autocomplete
+                freeSolo
+                id="free-solo-1-demo"
+                disableClearable
+                options={addressSuggestions.map((option) => option.label)}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Search destination"
+                        variant="filled"
+                        InputProps={{
+                            ...params.InputProps,
+                            type: 'search',
+                            endAdornment: (
+                                <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
+                                    {destSuggLoading && <CircularProgress size="25px" color="inherit" />}
+                                </Box>
+                            ),
+                        }}
+                        onChange={(e) => fetchAddrSuggestions(e, { inputName: "dest" })}
+                        ref={destinationRef}
+                    />
+                )}
+            />
+        </Fragment>
+    );
+}
+
 const RideDashboard = (props) => {
     const [userFullName, setUserFullName] = useState("");
     const [loggedIn, setloggedIn] = useState();
@@ -223,6 +344,8 @@ const RideDashboard = (props) => {
 
     const themelg = useTheme();
     const [open, setOpen] = useState(false);
+
+    let history = useHistory();
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -263,6 +386,12 @@ const RideDashboard = (props) => {
         const _loggedIn = await LocalStorage.getBool("isLoggedIn");
         setloggedIn(_loggedIn);
 
+        var user = getAuth().currentUser;
+
+        if(user == null) {
+            return <Redirect to="/ride" />;
+        }
+
         const _local = await LocalStorage.getUserForm("UserDetails");
         setUserFullName(_local.firstname + " " + _local.lastname);
         // currentLocation();
@@ -274,7 +403,7 @@ const RideDashboard = (props) => {
 
 
     if (loggedIn === false) {
-        return <Redirect to="/" />
+        return <Redirect to="/ride" />
     }
 
     const drawer = (
@@ -498,19 +627,22 @@ const RideDashboard = (props) => {
                                 display: { xs: 'block', sm: 'none' }
                             }} variant="rectangular" height="50%" /> */}
 
-                                <Form.Group className="mb-3">
+                            {/* form starts here */}
+                                <RequestForm />
+
+                                {/* <Form.Group className="mb-3">
                                     <InputGroup>
                                         <span className="country-prefix"><MyLocationOutlinedIcon /></span>
                                         <Form.Control className="phone-field" type="text" placeholder="Search pick-up location" />
                                     </InputGroup>
-                                </Form.Group>
+                                </Form.Group> */}
 
-                                <Form.Group className="mb-3">
+                                {/* <Form.Group className="mb-3">
                                     <InputGroup>
                                         <span className="country-prefix"><LocationOnOutlinedIcon /></span>
                                         <Form.Control className="phone-field" type="text" placeholder="Search destination" />
                                     </InputGroup>
-                                </Form.Group>
+                                </Form.Group> */}
                             </StyledBox>
                         </SwipeableDrawer>
                     </Root>
