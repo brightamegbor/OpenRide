@@ -28,6 +28,10 @@ import { styled, useTheme } from '@mui/material/styles';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import CarRentalIcon from '@mui/icons-material/CarRental';
+import WorkIcon from '@mui/icons-material/WorkOutline';
+import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import './index.css';
 // import Locate from "leaflet.locatecontrol";
 import L from 'leaflet';
@@ -38,6 +42,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Skeleton from '@mui/material/Skeleton';
 import { grey } from '@mui/material/colors';
 import { Global } from '@emotion/react';
+import { Form, InputGroup } from "react-bootstrap";
 
 const drawerWidth = 240;
 
@@ -279,12 +284,12 @@ const RideDashboard = (props) => {
                 <div className="d-flex flex-column justify-content-between h-100">
                     <div>
                         <List>
-                            {['Rides', 'Wallet', 'Earnings', 'Notifications'].map((text, index) => (
+                            {['Ride History', 'Promotions', 'Payment', 'Work Rides'].map((text, index) => (
                                 <ListItem button key={text}>
                                     <ListItemIcon>
                                         {index === 0 ? <TravelExploreIcon /> :
                                             index === 1 ? <AccountBalanceIcon /> :
-                                                index === 2 ? <MoneyIcon /> : <NotificationIcon />}
+                                                index === 2 ? <MoneyIcon /> : <WorkIcon />}
                                     </ListItemIcon>
                                     <ListItemText primary={text} />
                                 </ListItem>
@@ -305,11 +310,11 @@ const RideDashboard = (props) => {
 
                     <div className="mt-auto">
                         <List>
-                            {['Log out', 'Availability'].map((text, index) => (
+                            {['Log out', 'Become a driver'].map((text, index) => (
                                 <ListItem button key={text} onClick={text === "Log out" ? signoutUser : null}>
                                     <ListItemIcon>
                                         {index % 2 === 0 ? <LogoutIcon />
-                                            : <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
+                                            : <CarRentalIcon />
                                         }
                                     </ListItemIcon>
                                     <ListItemText primary={text} />
@@ -438,7 +443,7 @@ const RideDashboard = (props) => {
                         <Global
                             styles={{
                                 '.MuiSwipeDrawer > .MuiPaper-root': {
-                                    height: `calc(50% - ${drawerBleeding}px)`,
+                                    height: `calc(80% - ${drawerBleeding}px)`,
                                     overflow: 'visible',
                                 },
                             }}
@@ -478,7 +483,7 @@ const RideDashboard = (props) => {
                                 <Puller sx={{
                                     display: { xs: 'block', sm: 'none' }
                                 }} />
-                                <Typography sx={{ p: 2, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}>Ride requests (0)</Typography>
+                                <Typography sx={{ p: 2, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}>Where to ?</Typography>
                             </StyledBox>
                             <StyledBox
                                 sx={{
@@ -493,7 +498,19 @@ const RideDashboard = (props) => {
                                 display: { xs: 'block', sm: 'none' }
                             }} variant="rectangular" height="50%" /> */}
 
-                                <Typography>No live request available</Typography>
+                                <Form.Group className="mb-3">
+                                    <InputGroup>
+                                        <span className="country-prefix"><MyLocationOutlinedIcon /></span>
+                                        <Form.Control className="phone-field" type="text" placeholder="Search pick-up location" />
+                                    </InputGroup>
+                                </Form.Group>
+
+                                <Form.Group className="mb-3">
+                                    <InputGroup>
+                                        <span className="country-prefix"><LocationOnOutlinedIcon /></span>
+                                        <Form.Control className="phone-field" type="text" placeholder="Search destination" />
+                                    </InputGroup>
+                                </Form.Group>
                             </StyledBox>
                         </SwipeableDrawer>
                     </Root>

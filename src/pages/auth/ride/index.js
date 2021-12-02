@@ -4,11 +4,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import LocalStorage from "../../../services/localStorage";
-import * as uuid from 'uuid';
 import { useHistory } from "react-router-dom";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';
-// import { signUpWithPhone } from "../../../services/firebaseUtils";
 import firebaseCRUDService from "../../../services/firebaseUtils";
 import "./index.css"; 
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
@@ -22,12 +20,6 @@ const schema = yup.object({
 
 }).required();
 
-const schema2 = yup.object({
-    code: yup.string()
-        .min(10, "Please enter 6 digits confirmation code")
-        .required("This field is requried"),
-
-}).required();
 
 const RegisterRide = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +39,6 @@ const RegisterRide = () => {
     const [smsCodeInvalid, setSMSCodeInvalid] = useState(false);
 
     const [confirmResultt, setConfirmResultt] = useState(null);
-    const [token, setToken] = useState("");
 
     const auth = getAuth();
     
@@ -60,7 +51,7 @@ const RegisterRide = () => {
         setErrorMessage("");
         let _phoneNumber = "+233" + data.mobileNumber.substring(1);
         setMobileNumber(_phoneNumber);
-        console.log(_phoneNumber);
+        // console.log(_phoneNumber);
         // return;
 
         await signInWithPhoneNumber(auth, _phoneNumber, appVerifier)
@@ -70,12 +61,11 @@ const RegisterRide = () => {
                 window.confirmationResult = confirmationResult;
                 console.log(confirmationResult);
                 setConfirmResultt(confirmationResult);
+                setConfirmCode(true);
                 // ...
             }).catch((error) => {
                 // Error; SMS not sent
                 console.log(error);
-                // ...
-                // window.recaptchaVerifier.render().then(function (widgetId) {
                     // eslint-disable-next-line no-undef
                 grecaptcha.reset(appVerifier.widgetId);
                 // });
@@ -83,15 +73,14 @@ const RegisterRide = () => {
 
 
         setIsLoading(false);
-        setConfirmCode(true);
         return true;
-    }, [auth, mobileNumber]);
+    }, [auth]);
 
     const confirmResultCode = useCallback(async () => {
         setSMSCodeInvalid(false);
         if (smsCode === "" || smsCode.length < 6) {
             setSMSCodeInvalid(true);
-            return true;
+            return;
         }
         setIsLoading(true);
         setErrorMessage("");
@@ -100,7 +89,7 @@ const RegisterRide = () => {
 
         await confirmResultt.confirm(smsCode).then(async (result) => {
             // User signed in successfully.
-            console.log(result);
+            // console.log(result);
             
             var newData = Object.assign({}, "");
             console.log(mobileNumber);
@@ -201,7 +190,7 @@ const RegisterRide = () => {
                                         {
                                             isLoading === false ? "Sign in"
                                                 :
-                                                <Box sx={{ display: 'flex' }}>
+                                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                                     <CircularProgress size="25px" color="inherit" />
                                                 </Box>
                                         }
@@ -277,11 +266,11 @@ const RegisterRide = () => {
 
                                 {/* <div className="d-flex"> */}
                                     {/* <div> */}
-                                             <Button className="next-btn" id="phone-next-btn" type="submit">
+                                             <Button className="next-btn center" id="phone-next-btn" type="submit">
                                             {
                                                 isLoading === false ? "Next"
                                                     :
-                                                    <Box sx={{ display: 'flex' }}>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                                         <CircularProgress size="25px" color="inherit" />
                                                     </Box>
                                             }
