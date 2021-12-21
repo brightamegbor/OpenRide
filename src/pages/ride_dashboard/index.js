@@ -20,7 +20,7 @@ import MoneyIcon from '@mui/icons-material/MoneyOutlined';
 import NotificationIcon from '@mui/icons-material/NotificationsOutlined'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 import TravelExploreIcon from '@mui/icons-material/TravelExploreOutlined'
-import { CircularProgress, IconButton } from "@mui/material";
+import { CircularProgress, IconButton, InputAdornment } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/LogoutOutlined';
 import Switch from '@mui/material/Switch';
@@ -32,6 +32,7 @@ import CarRentalIcon from '@mui/icons-material/CarRental';
 import WorkIcon from '@mui/icons-material/WorkOutline';
 import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import './index.css';
 // import Locate from "leaflet.locatecontrol";
 import L from 'leaflet';
@@ -47,8 +48,8 @@ import { getAuth } from "firebase/auth";
 import { useHistory, } from "react-router-dom";
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField'; 
-import { OpenStreetMapProvider } from 'leaflet-geosearch'; 
-import * as ELG from "esri-leaflet-geocoder";
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import ClosedOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
 
 const drawerWidth = 240;
@@ -197,7 +198,7 @@ function LocationMarker() {
             map.flyTo(e.latlng, map.getZoom(),);
             const radius = e.accuracy;
             const circle = L.circle(e.latlng, radius,
-                { fillOpacity: 0.2, stroke: false, radius: 15 });
+                { fillOpacity: 0.1, stroke: false, radius: 15 });
             circle.addTo(map);
             setBbox(e.bounds.toBBoxString().split(","));
         });
@@ -220,7 +221,7 @@ function LocationMarker() {
     );
 }
 
-function RequestForm() {
+function RequestForm({ props, heightCallback}) {
     const [addressSuggestions, setAddressSuggestions] = useState([]);
     const [myLocSuggLoading, setMyLocSugLoading] = useState(false);
     const [destSuggLoading, setDestSugLoading] = useState(false);
@@ -230,17 +231,31 @@ function RequestForm() {
     const myLocationRef = useRef();
     const destinationRef = useRef();
 
-    const fetchAdd = () => {
+    const fetchAdd = async () => {
         var lat = 5.10535;
         var lng = -1.2466;
-        const nominatimURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng + "&zoom=15";
-        // fetch lat and long and use it with leaflet
-        fetch(nominatimURL)
-            .then(response => response.json())
-            .then(async data => {
-                await setMyLocValue(data.address.city);
-                console.log(data.address.city);
-            })
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                // this.setState({
+                lng = position.coords.longitude;
+                lat = position.coords.latitude;
+
+                console.log(lng);
+
+                const nominatimURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng + "&zoom=14";
+                // fetch lat and long and use it with leaflet
+                fetch(nominatimURL)
+                    .then(response => response.json())
+                    .then(async data => {
+                        await setMyLocValue(data.address.city);
+                        console.log(data.address.city);
+                    })
+                // });
+            },
+            err => console.log(err)
+        )
+        
     }
 
     useEffect(() => {
@@ -265,6 +280,7 @@ function RequestForm() {
         var input = e.target.value;
 
         opsProvider.current.search({ query: input}).then(async (results) => {
+            console.log(results);
             await setAddressSuggestions([]);
             await setAddressSuggestions(results);
 
@@ -279,12 +295,18 @@ function RequestForm() {
     return (
         <Fragment>
             <p className="pt-1"></p>
+            <ClosedOutlinedIcon className="float-start" onClick={heightCallback} />
+            <p className="fw-bold text-center">Select location</p>
+            <p className="pt-1"></p>
+
             <Autocomplete
                 freeSolo
                 id="free-solo-2-demo"
-                disableClearable
-                options={addressSuggestions.map((option) => option.label)}
-                inputValue={myLocValue}
+                // disableClearable
+                noOptionsText={'No location found'}
+                options={addressSuggestions}
+                getOptionLabel={(option) => option.label}
+                // inputValue={myLocValue}
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -293,13 +315,15 @@ function RequestForm() {
                         InputProps={{
                             ...params.InputProps,
                             type: 'search',
-                            endAdornment: (
-                                <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
-                                    {myLocSuggLoading && <CircularProgress size="25px" color="inherit" />}
-                                </Box>
-                            ),
+                            // endAdornment: (
+                            //     <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
+                            //         {myLocSuggLoading && <CircularProgress size="25px" color="inherit" />}
+                            //     </Box>
+                            // ),
                         }}
-                        onChange={(e) => fetchAddrSuggestions(e, {inputName: "my"})}
+                        onChange={(event) => {
+                            return fetchAddrSuggestions(event, {inputName: "my"});
+                        }}
                         ref={myLocationRef}
                     />
                 )}
@@ -309,8 +333,11 @@ function RequestForm() {
             <Autocomplete
                 freeSolo
                 id="free-solo-1-demo"
-                disableClearable
-                options={addressSuggestions.map((option) => option.label)}
+                // disableClearable={false}
+                // clearOnBlur
+                noOptionsText={'No location found'}
+                options={addressSuggestions}
+                getOptionLabel={(option) => option.label}
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -319,11 +346,11 @@ function RequestForm() {
                         InputProps={{
                             ...params.InputProps,
                             type: 'search',
-                            endAdornment: (
-                                <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
-                                    {destSuggLoading && <CircularProgress size="25px" color="inherit" />}
-                                </Box>
-                            ),
+                            // endAdornment: (
+                            //     <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
+                            //         {destSuggLoading && <CircularProgress size="25px" color="inherit" />}
+                            //     </Box>
+                            // ),
                         }}
                         onChange={(e) => fetchAddrSuggestions(e, { inputName: "dest" })}
                         ref={destinationRef}
@@ -345,23 +372,26 @@ const RideDashboard = (props) => {
     const themelg = useTheme();
     const [open, setOpen] = useState(false);
 
+    
     let history = useHistory();
-
+    
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
-
+    
     const handleDrawerOpenClose = () => {
         setOpen(!open);
     };
-
+    
     // ride request drawer mobile
-    const [openRequest, setOpenRequest] = useState(false);
-
+    const [openRequest, setOpenRequest] = useState(true);
+    
     const toggleDrawer = (newOpen) => () => {
         setOpenRequest(newOpen);
     };
-
+    
+    const [whereToHeight, setwhereToHeight] = useState(40);
+    
     async function signoutUser() {
         await signOutUser().then((result) => {
             LocalStorage.saveBool("isLoggedIn", false);
@@ -551,10 +581,10 @@ const RideDashboard = (props) => {
                     <Toolbar className="top-toolbar" />
                     {/* body */}
                     <div className="MapWrapper" sx={{ flexGrow: 1, }}>
-                        <MapContainer center={
+                        <MapContainer zoomControl={false} center={
                             currentLocMap.latitude !== 0
                                 ? [currentLocMap.latitude, currentLocMap.longitude]
-                                : [5.10535, -1.2466]} zoom={15} >
+                                : [5.10535, -1.2466]} zoom={14} >
 
                             <TileLayer
                                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -572,7 +602,7 @@ const RideDashboard = (props) => {
                         <Global
                             styles={{
                                 '.MuiSwipeDrawer > .MuiPaper-root': {
-                                    height: `calc(80% - ${drawerBleeding}px)`,
+                                    height: `calc(${whereToHeight}% - ${drawerBleeding}px)`,
                                     overflow: 'visible',
                                 },
                             }}
@@ -600,7 +630,7 @@ const RideDashboard = (props) => {
                             <StyledBox
                                 sx={{
                                     position: 'absolute',
-                                    top: -drawerBleeding,
+                                    top: -whereToHeight,
                                     borderTopLeftRadius: 8,
                                     borderTopRightRadius: 8,
                                     visibility: 'visible',
@@ -612,7 +642,7 @@ const RideDashboard = (props) => {
                                 <Puller sx={{
                                     display: { xs: 'block', sm: 'none' }
                                 }} />
-                                <Typography sx={{ p: 2, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}>Where to ?</Typography>
+                                <Typography sx={{ p: 3, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}></Typography>
                             </StyledBox>
                             <StyledBox
                                 sx={{
@@ -620,6 +650,7 @@ const RideDashboard = (props) => {
                                     pb: 2,
                                     height: '100%',
                                     overflow: 'auto',
+                                    width: '100%',
                                     display: { xs: 'block', sm: 'none' }
                                 }}
                             >
@@ -628,7 +659,33 @@ const RideDashboard = (props) => {
                             }} variant="rectangular" height="50%" /> */}
 
                             {/* form starts here */}
-                                <RequestForm />
+                                {whereToHeight === 40 && 
+                                    <div className="d-flex w-100">
+                                        <TextField
+                                            fullWidth
+                                            className="pt-ss3"
+                                            // {...params}
+                                            // label="Search destination"
+                                            placeholder="Where to?"
+                                            variant="filled"
+                                            InputProps={{
+                                                // ...params.InputProps,
+                                                // type: 'search',
+                                                startAdornment: 
+                                                    <InputAdornment position="start"><SearchOutlinedIcon /></InputAdornment>,
+                                            }}
+                                        // onChange={(e) => fetchAddrSuggestions(e, { inputName: "dest" })}
+                                        // ref={destinationRef}
+                                            onClick={() => setwhereToHeight(100)}
+                                        />
+                                    </div>
+                                }
+
+                                {/* {whereToHeight === 100 && */}
+                                <div className={whereToHeight === 100 ? "d-block" : "d-none"}>
+                                    <RequestForm heightCallback={() => setwhereToHeight(40)} />
+                                </div>
+                                {/* // } */}
 
                                 {/* <Form.Group className="mb-3">
                                     <InputGroup>

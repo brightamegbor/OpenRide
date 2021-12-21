@@ -117,7 +117,7 @@ class Landing extends Component {
 
                             <div className="text-center text-md-start text-lg-start text-xl-start text-xxl-start">
                                 <button type="button" className="btn btn-dark rounded">
-                                    <a href="/register" className="p-3 p-lg-3 text-white text-decoration-none">
+                                    <a href="/ride" className="p-3 p-lg-3 text-white text-decoration-none">
                                         Ride
                                     </a>
                                 </button>
