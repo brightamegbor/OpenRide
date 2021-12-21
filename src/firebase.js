@@ -1,15 +1,14 @@
 import { initializeApp } from 'firebase/app';
 // import {getFirestore} from 'firebase/firestore'
 
-const settings = { timestampsInSnapshots: true };
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBQMx8j9O9QiJLvIDYwM1vJzw-KTCJPjqk",
-    authDomain: "open-ryde.firebaseapp.com",
-    projectId: "open-ryde",
-    storageBucket: "open-ryde.appspot.com",
-    messagingSenderId: "4011188406",
-    appId: "1:4011188406:web:2645fd5ca02b3f45f0c617"
+    apiKey: `${process.env.local.FIREBASE_API_KEY}`,
+    authDomain: `${process.env.local.FIREBASE_AUTH_DOMAIN}`,
+    projectId: `${process.env.local.FIREBASE_PROJECT_ID}`,
+    storageBucket: `${process.env.local.FIREBASE_STORAGE_BUCKET}`,
+    messagingSenderId: `${process.env.local.FIREABSE_MESSAGING_SENDER_ID}`,
+    appId: `${process.env.local.FIREBASE_APP_ID}`,
 };
 
 const firebase = initializeApp(firebaseConfig);
