@@ -20,7 +20,7 @@ import MoneyIcon from '@mui/icons-material/MoneyOutlined';
 import NotificationIcon from '@mui/icons-material/NotificationsOutlined'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 import TravelExploreIcon from '@mui/icons-material/TravelExploreOutlined'
-import { CircularProgress, IconButton, InputAdornment } from "@mui/material";
+import { Button, CircularProgress, IconButton, InputAdornment, Stack } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/LogoutOutlined';
 import Switch from '@mui/material/Switch';
@@ -51,6 +51,7 @@ import TextField from '@mui/material/TextField';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import ClosedOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
+// TODO: bolt auto complete address 
 
 const drawerWidth = 240;
 
@@ -226,7 +227,9 @@ function RequestForm({ props, heightCallback}) {
     const [myLocSuggLoading, setMyLocSugLoading] = useState(false);
     const [destSuggLoading, setDestSugLoading] = useState(false);
     const [myLocValue, setMyLocValue] = useState("");
-
+    const [destLocValue, setDestLocValue] = useState("");
+    const [myLocValueActive, setmyLocValueActive] = useState(false);
+    
     const opsProvider = useRef();
     const myLocationRef = useRef();
     const destinationRef = useRef();
@@ -248,8 +251,9 @@ function RequestForm({ props, heightCallback}) {
                 fetch(nominatimURL)
                     .then(response => response.json())
                     .then(async data => {
-                        await setMyLocValue(data.address.city);
-                        console.log(data.address.city);
+                        await setMyLocValue(data.address.city !== undefined ? data.address.city : data.address.town);
+                        myLocationRef.current.value = data.address.city !== undefined ? data.address.city : data.address.town;
+                        console.log(data.address.city !== undefined ? data.address.city : data.address.town);
                     })
                 // });
             },
@@ -302,11 +306,11 @@ function RequestForm({ props, heightCallback}) {
             <Autocomplete
                 freeSolo
                 id="free-solo-2-demo"
-                // disableClearable
-                noOptionsText={'No location found'}
-                options={addressSuggestions}
-                getOptionLabel={(option) => option.label}
-                // inputValue={myLocValue}
+                disableClearable
+                // noOptionsText={'No location found'}
+                options={[]}
+                // getOptionLabel={(option) => option.label}
+                inputValue={myLocValue}
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -315,16 +319,21 @@ function RequestForm({ props, heightCallback}) {
                         InputProps={{
                             ...params.InputProps,
                             type: 'search',
-                            // endAdornment: (
-                            //     <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
-                            //         {myLocSuggLoading && <CircularProgress size="25px" color="inherit" />}
-                            //     </Box>
-                            // ),
+                            endAdornment: (
+                                <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
+                                    {(myLocValue.length !== 0 && myLocationRef.current === document.activeElement) && <ClosedOutlinedIcon onClick={() => setMyLocValue("")} />}
+                                </Box>
+                            ),
                         }}
                         onChange={(event) => {
+                            setMyLocValue(event.target.value);
                             return fetchAddrSuggestions(event, {inputName: "my"});
                         }}
-                        ref={myLocationRef}
+                        onFocus={() => {
+                            setmyLocValueActive(true);
+                        }}
+                        // value={myLocValue}
+                        inputRef={myLocationRef}
                     />
                 )}
             />
@@ -333,11 +342,12 @@ function RequestForm({ props, heightCallback}) {
             <Autocomplete
                 freeSolo
                 id="free-solo-1-demo"
-                // disableClearable={false}
+                disableClearable
                 // clearOnBlur
-                noOptionsText={'No location found'}
-                options={addressSuggestions}
-                getOptionLabel={(option) => option.label}
+                // noOptionsText={'No location found'}
+                options={[]}
+                // getOptionLabel={(option) => option.label}
+                inputValue={destLocValue}
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -346,17 +356,45 @@ function RequestForm({ props, heightCallback}) {
                         InputProps={{
                             ...params.InputProps,
                             type: 'search',
-                            // endAdornment: (
-                            //     <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
-                            //         {destSuggLoading && <CircularProgress size="25px" color="inherit" />}
-                            //     </Box>
-                            // ),
+                            endAdornment: (
+                                <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
+                                    {(destLocValue.length !== 0 && destinationRef.current === document.activeElement) && <ClosedOutlinedIcon onClick={() => setDestLocValue("")} />}
+                                </Box>
+                            ),
                         }}
-                        onChange={(e) => fetchAddrSuggestions(e, { inputName: "dest" })}
+                        onChange={(e) => {
+                            setDestLocValue(e.target.value);
+                            return fetchAddrSuggestions(e, { inputName: "dest" });
+                        }}
+                        onFocus={() => {
+                            setmyLocValueActive(false);
+                        }}
                         ref={destinationRef}
                     />
                 )}
             />
+
+            <p className="pt-1"></p>
+            
+            <Button fullWidth className="p-3 rounded-pill" variant="contained" disabled={myLocValue.length === 0 || destLocValue.length === 0}>
+                Get Rides
+            </Button>
+
+            <p className="pt-1"></p>
+            <div>{addressSuggestions.map((suggest, index) => (
+                <li key={index} className="list-unstyled" onClick={() => myLocValueActive ? setMyLocValue(suggest.label) : setDestLocValue(suggest.label)}>
+                    <p><LocationOnOutlinedIcon /> {suggest.label}</p>
+                </li>
+            ))}</div>
+
+            <p className="pt-1"></p>
+            {addressSuggestions.length !== 0 && 
+                <p>
+                    Data © OpenStreetMap contributors, ODbL 1.0. <a href="https://osm.org/copyright" target="_blank" rel="noreferrer">
+                         https://osm.org/copyright
+                    </a>
+                </p>
+            }
         </Fragment>
     );
 }
