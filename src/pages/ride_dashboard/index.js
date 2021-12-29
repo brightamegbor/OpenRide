@@ -51,7 +51,7 @@ import TextField from '@mui/material/TextField';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import ClosedOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
-// TODO: bolt auto complete address 
+// TODO: rides available ui
 
 const drawerWidth = 240;
 
@@ -244,7 +244,7 @@ function RequestForm({ props, heightCallback}) {
                 lng = position.coords.longitude;
                 lat = position.coords.latitude;
 
-                console.log(lng);
+                // console.log(lng);
 
                 const nominatimURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng + "&zoom=14";
                 // fetch lat and long and use it with leaflet
@@ -253,7 +253,7 @@ function RequestForm({ props, heightCallback}) {
                     .then(async data => {
                         await setMyLocValue(data.address.city !== undefined ? data.address.city : data.address.town);
                         myLocationRef.current.value = data.address.city !== undefined ? data.address.city : data.address.town;
-                        console.log(data.address.city !== undefined ? data.address.city : data.address.town);
+                        // console.log(data.address.city !== undefined ? data.address.city : data.address.town);
                     })
                 // });
             },
@@ -284,7 +284,7 @@ function RequestForm({ props, heightCallback}) {
         var input = e.target.value;
 
         opsProvider.current.search({ query: input}).then(async (results) => {
-            console.log(results);
+            // console.log(results);
             await setAddressSuggestions([]);
             await setAddressSuggestions(results);
 
@@ -429,6 +429,7 @@ const RideDashboard = (props) => {
     };
     
     const [whereToHeight, setwhereToHeight] = useState(40);
+    const [showRides, setShowRides] = useState(false);
     
     async function signoutUser() {
         await signOutUser().then((result) => {
@@ -699,23 +700,26 @@ const RideDashboard = (props) => {
                             {/* form starts here */}
                                 {whereToHeight === 40 && 
                                     <div className="d-flex w-100">
-                                        <TextField
-                                            fullWidth
-                                            className="pt-ss3"
-                                            // {...params}
-                                            // label="Search destination"
-                                            placeholder="Where to?"
-                                            variant="filled"
-                                            InputProps={{
-                                                // ...params.InputProps,
-                                                // type: 'search',
-                                                startAdornment: 
-                                                    <InputAdornment position="start"><SearchOutlinedIcon /></InputAdornment>,
-                                            }}
-                                        // onChange={(e) => fetchAddrSuggestions(e, { inputName: "dest" })}
-                                        // ref={destinationRef}
-                                            onClick={() => setwhereToHeight(100)}
-                                        />
+                                        {!showRides ? 
+                                            <TextField
+                                                fullWidth
+                                                className="pt-ss3"
+                                                // {...params}
+                                                // label="Search destination"
+                                                placeholder="Where to?"
+                                                variant="filled"
+                                                InputProps={{
+                                                    // ...params.InputProps,
+                                                    // type: 'search',
+                                                    startAdornment: 
+                                                        <InputAdornment position="start"><SearchOutlinedIcon /></InputAdornment>,
+                                                }}
+                                            // onChange={(e) => fetchAddrSuggestions(e, { inputName: "dest" })}
+                                            // ref={destinationRef}
+                                                onClick={() => setwhereToHeight(100)}
+                                            />
+                                            : <div></div>
+                                        }
                                     </div>
                                 }
 
