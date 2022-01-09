@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { Fragment, useState, useEffect, useCallback, useContext } from "react"
+import React, { Fragment, useState, useRef, useEffect, useCallback, useContext } from "react"
 // import { Nav, Navbar } from "react-bootstrap"
 import { signOutUser } from "../../services/firebaseUtils";
 import { Redirect } from "react-router";
@@ -45,8 +45,11 @@ import { getAuth } from "firebase/auth";
 import TextField from '@mui/material/TextField'; 
 import AddressPickerForm from '../../components/address_picker';
 import Context from "../../Context";
+import RideDetail from "../../components/ride_details";
 
 // TODO: rides available ui
+
+require("leaflet-routing-machine");
 
 const drawerWidth = 240;
 
@@ -187,6 +190,27 @@ function LocationMarker() {
     const [bbox, setBbox] = useState([]);
 
     const map = useMap();
+    const routeControl = useRef();
+
+    const initRouteControl = () => {
+        routeControl.current = L.Routing.control({
+          show: true,
+          fitSelectedRoutes: true,
+          plan: false,
+          lineOptions: {
+            styles: [
+              {
+                color: "blue",
+                opacity: "0.7",
+                weight: 6
+              }
+            ]
+          },
+          router: L.Routing.mapbox(`${process.env.REACT_APP_MAPBOX_ACCESSTOKEN}`)
+        })
+          .addTo(map)
+          .getPlan();  
+      };
 
     useEffect(() => {
         map.locate().on("locationfound", function (e) {
@@ -198,6 +222,8 @@ function LocationMarker() {
             circle.addTo(map);
             setBbox(e.bounds.toBBoxString().split(","));
         });
+
+        initRouteControl();
     }, [map]);
 
     return position === null ? null : (
@@ -224,13 +250,16 @@ const RideDashboard = (props) => {
     // const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0, longitude: 0 });
 
     // eslint-disable-next-line no-unused-vars
-    const { selectedFrom, selectedTo, user, currentRide } = useContext(Context);
+    const { selectedFrom, selectedTo, currentRide, whereToHeight, setwhereToHeight } = useContext(Context);
 
     const { window } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
 
     const themelg = useTheme();
     const [open, setOpen] = useState(false);
+
+    // const map = useRef();
+    const routeControl = useRef();
 
     
     // let history = useHistory();
@@ -250,7 +279,7 @@ const RideDashboard = (props) => {
         setOpenRequest(newOpen);
     };
     
-    const [whereToHeight, setwhereToHeight] = useState(40);
+    // const [whereToHeight, setwhereToHeight] = useState(40);
     // eslint-disable-next-line no-unused-vars
     const [showRides, setShowRides] = useState(false);
     
@@ -261,19 +290,6 @@ const RideDashboard = (props) => {
             initialize();
         })
     }
-
-    // const currentLocation = useCallback(() => {
-    //     navigator.geolocation.getCurrentPosition(
-    //         (position) => {
-    //             setCurrentLocMap({
-    //                 longitude: position.coords.longitude,
-    //                 latitude: position.coords.latitude
-    //             });
-    //             // console.log(currentLocMap.longitude);
-    //         },
-    //         err => console.log(err)
-    //     );
-    // }, []);
 
     const initialize = useCallback(async () => {
         const _loggedIn = await LocalStorage.getBool("isLoggedIn");
@@ -292,7 +308,53 @@ const RideDashboard = (props) => {
 
     useEffect(() => {
         initialize();
+        // initRouteControl();
     }, []);
+
+    const drawRoute = useCallback((from, to) => {
+        if (shouldRouteDrawed(from, to) && routeControl && routeControl.current) {
+          const fromLatLng = new L.LatLng(from.y, from.x);
+          const toLatLng = new L.LatLng(to.y, to.x);
+          routeControl.current.setWaypoints([fromLatLng, toLatLng]);
+        }
+      }, []);
+
+    useEffect(() => {
+        if (shouldRouteDrawed(selectedFrom, selectedTo)) {
+          drawRoute(selectedFrom, selectedTo);
+        }
+      }, [selectedFrom, selectedTo, drawRoute]);
+
+    /**
+   * check if a route should be drawed.
+   * @param {*} selectedFrom 
+   * @param {*} selectedTo 
+   */
+    const shouldRouteDrawed = (selectedFrom, selectedTo) => {
+        return selectedFrom && selectedTo && selectedFrom.label &&
+        selectedTo.label && selectedFrom.x && selectedTo.x &&
+        selectedFrom.y && selectedTo.y;   
+      };
+
+    // const initRouteControl = () => {
+    //     routeControl.current = L.Routing.control({
+    //       show: true,
+    //       fitSelectedRoutes: true,
+    //       plan: false,
+    //       lineOptions: {
+    //         styles: [
+    //           {
+    //             color: "blue",
+    //             opacity: "0.7",
+    //             weight: 6
+    //           }
+    //         ]
+    //       },
+    //       router: L.Routing.mapbox(`${process.env.REACT_APP_MAPBOX_ACCESSTOKEN}`)
+    //     })
+    //       .addTo(map.current)
+    //       .getPlan();  
+    //   };
 
 
     if (loggedIn === false) {
@@ -350,6 +412,15 @@ const RideDashboard = (props) => {
     );
 
     const container = window !== undefined ? () => window().document.body : undefined;
+
+    const renderSwipeContent = () => {
+        if (!currentRide) {
+            return <AddressPickerForm heightCallback={() => setwhereToHeight(40)}  />
+          } 
+          if (currentRide) {
+            return <RideDetail user={currentRide.driver} isDriver={false} currentRide={currentRide} />
+          }
+    }
 
     return (
         <Fragment>
@@ -547,7 +618,7 @@ const RideDashboard = (props) => {
 
                                 {/* {whereToHeight === 100 && */}
                                 <div className={whereToHeight === 100 ? "d-block" : "d-none"}>
-                                    <AddressPickerForm heightCallback={() => setwhereToHeight(40)} />
+                                    {renderSwipeContent()}
                                 </div>
                                 {/* // } */}
 

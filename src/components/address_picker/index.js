@@ -2,7 +2,6 @@
 import React, { Fragment, useState, useEffect, 
   useRef, useContext, useCallback } from "react";
 import Box from '@mui/material/Box';
-import { Button } from "@mui/material";
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 // import '../../index.css';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -14,7 +13,7 @@ import RequestRide from '../request_ride';
 import withModal from '../modal';
 
 
-function AddressPickerForm( props, {heightCallback}) {
+function AddressPickerForm(props) {
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [myLocValue, setMyLocValue] = useState("");
   const [destLocValue, setDestLocValue] = useState("");
@@ -26,7 +25,7 @@ function AddressPickerForm( props, {heightCallback}) {
   const myLocationRef = useRef();
   const destinationRef = useRef();
 
-  const { toggleModal } = props;
+  const { toggleModal, heightCallback } = props;
 
   const fetchAdd = async () => {
       var lat = 5.10535;
@@ -93,10 +92,26 @@ function AddressPickerForm( props, {heightCallback}) {
       });
   }
 
+  const locationSelected = (selectedLocation) => {
+
+    if (selectedLocation && selectedLocation.label && selectedLocation.x && selectedLocation.y) {
+        if (myLocValueActive) {
+            // set pick up location.
+            setMyLocValue(() => selectedLocation.label);
+            setSelectedFrom(() => selectedLocation);
+          } else {
+            // set destination.
+            setDestLocValue(() => selectedLocation.label);
+            setSelectedTo(() => selectedLocation);
+            setAddressSuggestions(() => []);
+          }
+    }
+  }
+
   return (
       <Fragment>
           <p className="pt-1"></p>
-          <ClosedOutlinedIcon className="float-start" onClick={heightCallback} />
+          <ClosedOutlinedIcon className="float-start" onClick={() => heightCallback(true)} />
           <p className="fw-bold text-center">Select location</p>
           <p className="pt-1"></p>
 
@@ -172,17 +187,10 @@ function AddressPickerForm( props, {heightCallback}) {
           />
 
           <p className="pt-1"></p>
-          
-          <Button fullWidth className="p-3 rounded-pill" variant="contained" disabled={myLocValue.length === 0 || destLocValue.length === 0}>
-              Get Rides
-          </Button>
 
           <p className="pt-1"></p>
           <div>{addressSuggestions.map((suggest, index) => (
-              <li key={index} className="list-unstyled" onClick={() => {
-                myLocValueActive ? setSelectedFrom(() => suggest) : setSelectedTo(() => suggest);
-                return myLocValueActive ? setMyLocValue(suggest.label) : setDestLocValue(suggest.label);
-            }}>
+              <li key={index} className="list-unstyled" onClick={() => locationSelected(suggest)}>
                   <p><LocationOnOutlinedIcon /> {suggest.label}</p>
               </li>
           ))}</div>

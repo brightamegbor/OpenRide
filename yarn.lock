@@ -2494,6 +2494,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mapbox/corslite@npm:0.0.7":
+  version: 0.0.7
+  resolution: "@mapbox/corslite@npm:0.0.7"
+  checksum: ce943e303b660fa417fbdb0257ce6d8cc58c41dbff3a1006ac25ee550a18d66e2c80fd18c26cea78d97b7a079d4a456b906900847618f574c487ae19d0a0847c
+  languageName: node
+  linkType: hard
+
+"@mapbox/polyline@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@mapbox/polyline@npm:0.2.0"
+  bin:
+    polyline: bin/polyline.bin.js
+  checksum: 37fceafe1980881fb5f105c972470ed36f7a70ec0bd8eb30f9f7810e2277ae2effcfd74411631efb8cb26ac3401bb0af9ec1fa308ddbd85245d98e875eb901d5
+  languageName: node
+  linkType: hard
+
 "@material-ui/core@npm:^4.12.3":
   version: 4.12.3
   resolution: "@material-ui/core@npm:4.12.3"
@@ -2961,7 +2977,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-leaflet/core@npm:>=1.0.0 <1.1.0 || ^1.1.1, @react-leaflet/core@npm:^1.1.1":
+"@react-leaflet/core@npm:>=1.0.0 <1.1.0 || ^1.1.1, @react-leaflet/core@npm:^1.0.2":
   version: 1.1.1
   resolution: "@react-leaflet/core@npm:1.1.1"
   peerDependencies:
@@ -10597,6 +10613,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"leaflet-routing-machine@npm:^3.2.12":
+  version: 3.2.12
+  resolution: "leaflet-routing-machine@npm:3.2.12"
+  dependencies:
+    "@mapbox/corslite": 0.0.7
+    "@mapbox/polyline": ^0.2.0
+    osrm-text-instructions: ^0.13.2
+  checksum: 8922dbfc631dd23f83142c8ec364b561294dcbb030a17c532bdfd77aa83c5a7124f36122ff675cae57dd69052832c2f5436c001a80bb3b6404ac2e7db0e1d3cb
+  languageName: node
+  linkType: hard
+
 "leaflet.locatecontrol@npm:^0.74.1":
   version: 0.74.1
   resolution: "leaflet.locatecontrol@npm:0.74.1"
@@ -11892,13 +11919,14 @@ __metadata:
     leaflet: ^1.7.1
     leaflet-control-geocoder: ^2.3.0
     leaflet-geosearch: ^3.6.0
+    leaflet-routing-machine: ^3.2.12
     leaflet.locatecontrol: ^0.74.1
     react: ^17.0.2
     react-bootstrap: ^1.6.3
     react-dom: ^17.0.2
     react-hook-form: ^7.16.0
     react-icons: ^4.2.0
-    react-leaflet: ^3.2.2
+    react-leaflet: ">=3.1.0 <3.2.0"
     react-redux: ^7.2.5
     react-router-dom: ^5.3.0
     react-scripts: 4.0.3
@@ -11983,6 +12011,13 @@ __metadata:
   version: 0.3.0
   resolution: "os-browserify@npm:0.3.0"
   checksum: 16e37ba3c0e6a4c63443c7b55799ce4066d59104143cb637ecb9fce586d5da319cdca786ba1c867abbe3890d2cbf37953f2d51eea85e20dd6c4570d6c54bfebf
+  languageName: node
+  linkType: hard
+
+"osrm-text-instructions@npm:^0.13.2":
+  version: 0.13.4
+  resolution: "osrm-text-instructions@npm:0.13.4"
+  checksum: 3a50e03969f63459af805cc1c77ae78e933740c242a1086e2273593137c5b97c520e702012c5e59b4ad95a5499582aef309d8af2a418ff8730d264df0bf2fe76
   languageName: node
   linkType: hard
 
@@ -13752,16 +13787,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-leaflet@npm:^3.2.2":
-  version: 3.2.3
-  resolution: "react-leaflet@npm:3.2.3"
+"react-leaflet@npm:>=3.1.0 <3.2.0":
+  version: 3.1.0
+  resolution: "react-leaflet@npm:3.1.0"
   dependencies:
-    "@react-leaflet/core": ^1.1.1
+    "@react-leaflet/core": ^1.0.2
   peerDependencies:
     leaflet: ^1.7.1
     react: ^17.0.1
     react-dom: ^17.0.1
-  checksum: 2ed0492853006e60486b6a955f9984de5a2f65698bd0423aafd5f702acb3808f3674d44ec165bda24e331476edb67feccba70074c26cdab12101050205d39997
+  checksum: 52063a09cae8f642ad5736ca9c23dc833a073e5bf130b5fd146c5a5189bd87c64b6aec4be42333be0ce2582d8e05ed461061ed7c16f958006546399b75169a46
   languageName: node
   linkType: hard
 

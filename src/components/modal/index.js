@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 // import use state.
 import React, { useState } from 'react';
@@ -8,7 +9,7 @@ const withModal = ModalComponent => WrapperComponent => {
     
     return (
       <>
-        <WrapperComponent toggleModal={setIsModalShown}/>
+        <WrapperComponent heightCallback={setIsModalShown} toggleModal={setIsModalShown}/>
         {isModalShown && <ModalComponent toggleModal={setIsModalShown} />}
       </>
     )

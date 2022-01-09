@@ -7,7 +7,7 @@ import LoginDriver from '../pages/auth/login_driver';
 import DriverDashboard from '../pages/driver_dashboard';
 import RegisterRide from '../pages/auth/ride';
 import NotFoundComponent from '../pages/not_found';
-import RideDashboard from '../pages/ride_dashboard';
+import Home from '../pages/home';
 
 export default function Routes() {
     return (
@@ -18,7 +18,7 @@ export default function Routes() {
             <Route path="/login-driver" exact component={withRouter(LoginDriver)} />
             <Route path="/driver-dashboard" exact component={withRouter(DriverDashboard)} />
             <Route path="/ride" exact component={withRouter(RegisterRide)} />
-            <Route path="/ride-home" exact component={withRouter(RideDashboard)} />
+            <Route path="/ride-home" exact component={withRouter(Home)} />
             <Route path="/*" exact component={withRouter(NotFoundComponent)} />
         </Switch>
     )
