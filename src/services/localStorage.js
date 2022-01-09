@@ -1,7 +1,7 @@
 class LocalStorage {
     saveUserForm(name, data) {
         localStorage.setItem(name, JSON.stringify(data));
-    };
+    }
 
     getUserForm(name) {
         const savedForm = localStorage.getItem(name);

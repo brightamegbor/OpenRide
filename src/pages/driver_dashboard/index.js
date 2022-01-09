@@ -1,4 +1,5 @@
-import { Fragment, useState, useEffect, useCallback } from "react"
+/* eslint-disable react/prop-types */
+import React, { Fragment, useState, useEffect, useCallback } from "react"
 // import { Nav, Navbar } from "react-bootstrap"
 import { signOutUser } from "../../services/firebaseUtils";
 import { Redirect } from "react-router";
@@ -35,7 +36,7 @@ import MyLocationIcon from '../../assets/icons/my_location_icon.svg';
 import MuiAppBar from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import Skeleton from '@mui/material/Skeleton';
+// import Skeleton from '@mui/material/Skeleton';
 import { grey } from '@mui/material/colors';
 import { Global } from '@emotion/react';
 
@@ -209,9 +210,9 @@ function LocationMarker() {
 }
 
 const DriverDashboard = (props) => {
-    const [userFullName, setUserFullName] = useState("");
+    // const [userFullName, setUserFullName] = useState("");
     const [loggedIn, setloggedIn] = useState();
-    const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0,  longitude: 0 });
+    // const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0,  longitude: 0 });
 
     const { window } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -236,6 +237,7 @@ const DriverDashboard = (props) => {
 
     async function signoutUser() {
         await signOutUser().then((result) => {
+            console.log(result);
             LocalStorage.saveBool("isLoggedIn", false);
             initialize();
         })
@@ -258,8 +260,8 @@ const DriverDashboard = (props) => {
         const _loggedIn = await LocalStorage.getBool("isLoggedIn");
         setloggedIn(_loggedIn);
 
-        const _local = await LocalStorage.getUserForm("UserDetails");
-        setUserFullName(_local.firstname + " " + _local.lastname);
+        // const _local = await LocalStorage.getUserForm("UserDetails");
+        // setUserFullName(_local.firstname + " " + _local.lastname);
         // currentLocation();
     }, []);
 
@@ -416,9 +418,7 @@ const DriverDashboard = (props) => {
                     {/* body */}
                     <div className="MapWrapper" sx={{ flexGrow: 1, }}>
                         <MapContainer center={
-                            currentLocMap.latitude !== 0
-                                ? [currentLocMap.latitude, currentLocMap.longitude]
-                                : [5.10535, -1.2466]} zoom={15} >
+                            [5.10535, -1.2466]} zoom={15} >
 
                             <TileLayer
                                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

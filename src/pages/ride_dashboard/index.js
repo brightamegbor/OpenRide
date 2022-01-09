@@ -1,4 +1,5 @@
-import { Fragment, useState, useEffect, useCallback, useRef } from "react"
+/* eslint-disable react/prop-types */
+import React, { Fragment, useState, useEffect, useCallback, useContext } from "react"
 // import { Nav, Navbar } from "react-bootstrap"
 import { signOutUser } from "../../services/firebaseUtils";
 import { Redirect } from "react-router";
@@ -17,21 +18,18 @@ import ListItemText from '@mui/material/ListItemText';
 import InfoIcon from '@mui/icons-material/InfoOutlined';
 import MailIcon from '@mui/icons-material/ContactSupportOutlined';
 import MoneyIcon from '@mui/icons-material/MoneyOutlined';
-import NotificationIcon from '@mui/icons-material/NotificationsOutlined'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 import TravelExploreIcon from '@mui/icons-material/TravelExploreOutlined'
-import { Button, CircularProgress, IconButton, InputAdornment, Stack } from "@mui/material";
+import { IconButton, InputAdornment } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/LogoutOutlined';
-import Switch from '@mui/material/Switch';
+// import Switch from '@mui/material/Switch';
 import { styled, useTheme } from '@mui/material/styles';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CarRentalIcon from '@mui/icons-material/CarRental';
 import WorkIcon from '@mui/icons-material/WorkOutline';
-import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import './index.css';
 // import Locate from "leaflet.locatecontrol";
@@ -40,16 +38,13 @@ import MyLocationIcon from '../../assets/icons/my_location_icon.svg';
 import MuiAppBar from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import Skeleton from '@mui/material/Skeleton';
 import { grey } from '@mui/material/colors';
 import { Global } from '@emotion/react';
-import { Form, InputGroup } from "react-bootstrap";
 import { getAuth } from "firebase/auth";
-import { useHistory, } from "react-router-dom";
-import Autocomplete from '@mui/material/Autocomplete';
+// import { useHistory, } from "react-router-dom";
 import TextField from '@mui/material/TextField'; 
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
-import ClosedOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import AddressPickerForm from '../../components/address_picker';
+import Context from "../../Context";
 
 // TODO: rides available ui
 
@@ -145,47 +140,47 @@ const Puller = styled(Box)(({ theme }) => ({
 
 // --end
 
-const AntSwitch = styled(Switch)(({ theme }) => ({
-    width: 28,
-    height: 16,
-    padding: 0,
-    display: 'flex',
-    '&:active': {
-        '& .MuiSwitch-thumb': {
-            width: 15,
-        },
-        '& .MuiSwitch-switchBase.Mui-checked': {
-            transform: 'translateX(9px)',
-        },
-    },
-    '& .MuiSwitch-switchBase': {
-        padding: 2,
-        '&.Mui-checked': {
-            transform: 'translateX(12px)',
-            color: '#fff',
-            '& + .MuiSwitch-track': {
-                opacity: 1,
-                backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
-            },
-        },
-    },
-    '& .MuiSwitch-thumb': {
-        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        transition: theme.transitions.create(['width'], {
-            duration: 200,
-        }),
-    },
-    '& .MuiSwitch-track': {
-        borderRadius: 16 / 2,
-        opacity: 1,
-        backgroundColor:
-            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
-        boxSizing: 'border-box',
-    },
-}));
+// const AntSwitch = styled(Switch)(({ theme }) => ({
+//     width: 28,
+//     height: 16,
+//     padding: 0,
+//     display: 'flex',
+//     '&:active': {
+//         '& .MuiSwitch-thumb': {
+//             width: 15,
+//         },
+//         '& .MuiSwitch-switchBase.Mui-checked': {
+//             transform: 'translateX(9px)',
+//         },
+//     },
+//     '& .MuiSwitch-switchBase': {
+//         padding: 2,
+//         '&.Mui-checked': {
+//             transform: 'translateX(12px)',
+//             color: '#fff',
+//             '& + .MuiSwitch-track': {
+//                 opacity: 1,
+//                 backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
+//             },
+//         },
+//     },
+//     '& .MuiSwitch-thumb': {
+//         boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+//         width: 12,
+//         height: 12,
+//         borderRadius: 6,
+//         transition: theme.transitions.create(['width'], {
+//             duration: 200,
+//         }),
+//     },
+//     '& .MuiSwitch-track': {
+//         borderRadius: 16 / 2,
+//         opacity: 1,
+//         backgroundColor:
+//             theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
+//         boxSizing: 'border-box',
+//     },
+// }));
 
 function LocationMarker() {
     const [position, setPosition] = useState(null);
@@ -222,187 +217,14 @@ function LocationMarker() {
     );
 }
 
-function RequestForm({ props, heightCallback}) {
-    const [addressSuggestions, setAddressSuggestions] = useState([]);
-    const [myLocSuggLoading, setMyLocSugLoading] = useState(false);
-    const [destSuggLoading, setDestSugLoading] = useState(false);
-    const [myLocValue, setMyLocValue] = useState("");
-    const [destLocValue, setDestLocValue] = useState("");
-    const [myLocValueActive, setmyLocValueActive] = useState(false);
-    
-    const opsProvider = useRef();
-    const myLocationRef = useRef();
-    const destinationRef = useRef();
-
-    const fetchAdd = async () => {
-        var lat = 5.10535;
-        var lng = -1.2466;
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                // this.setState({
-                lng = position.coords.longitude;
-                lat = position.coords.latitude;
-
-                // console.log(lng);
-
-                const nominatimURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng + "&zoom=14";
-                // fetch lat and long and use it with leaflet
-                fetch(nominatimURL)
-                    .then(response => response.json())
-                    .then(async data => {
-                        await setMyLocValue(data.address.city !== undefined ? data.address.city : data.address.town);
-                        myLocationRef.current.value = data.address.city !== undefined ? data.address.city : data.address.town;
-                        // console.log(data.address.city !== undefined ? data.address.city : data.address.town);
-                    })
-                // });
-            },
-            err => console.log(err)
-        )
-        
-    }
-
-    useEffect(() => {
-        opsProvider.current = new OpenStreetMapProvider({
-            params: {
-                'accept-language': 'en',
-                countrycodes: "gh"
-            }
-        });
-
-        fetchAdd();
-        
-    }, []);
-
-    const fetchAddrSuggestions = (e, { inputName = "" }) => {
-        if (inputName === "my") {
-            setMyLocSugLoading(true);
-        } else {
-            setDestSugLoading(true);
-        }
-
-        var input = e.target.value;
-
-        opsProvider.current.search({ query: input}).then(async (results) => {
-            // console.log(results);
-            await setAddressSuggestions([]);
-            await setAddressSuggestions(results);
-
-            if (inputName === "my") {
-                setMyLocSugLoading(false);
-            } else {
-                setDestSugLoading(false);
-            }
-        });
-    }
-
-    return (
-        <Fragment>
-            <p className="pt-1"></p>
-            <ClosedOutlinedIcon className="float-start" onClick={heightCallback} />
-            <p className="fw-bold text-center">Select location</p>
-            <p className="pt-1"></p>
-
-            <Autocomplete
-                freeSolo
-                id="free-solo-2-demo"
-                disableClearable
-                // noOptionsText={'No location found'}
-                options={[]}
-                // getOptionLabel={(option) => option.label}
-                inputValue={myLocValue}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Pick-up location"
-                        variant="filled"
-                        InputProps={{
-                            ...params.InputProps,
-                            type: 'search',
-                            endAdornment: (
-                                <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
-                                    {(myLocValue.length !== 0 && myLocationRef.current === document.activeElement) && <ClosedOutlinedIcon onClick={() => setMyLocValue("")} />}
-                                </Box>
-                            ),
-                        }}
-                        onChange={(event) => {
-                            setMyLocValue(event.target.value);
-                            return fetchAddrSuggestions(event, {inputName: "my"});
-                        }}
-                        onFocus={() => {
-                            setmyLocValueActive(true);
-                        }}
-                        // value={myLocValue}
-                        inputRef={myLocationRef}
-                    />
-                )}
-            />
-
-            <p className="pt-2"></p>
-            <Autocomplete
-                freeSolo
-                id="free-solo-1-demo"
-                disableClearable
-                // clearOnBlur
-                // noOptionsText={'No location found'}
-                options={[]}
-                // getOptionLabel={(option) => option.label}
-                inputValue={destLocValue}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Search destination"
-                        variant="filled"
-                        InputProps={{
-                            ...params.InputProps,
-                            type: 'search',
-                            endAdornment: (
-                                <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
-                                    {(destLocValue.length !== 0 && destinationRef.current === document.activeElement) && <ClosedOutlinedIcon onClick={() => setDestLocValue("")} />}
-                                </Box>
-                            ),
-                        }}
-                        onChange={(e) => {
-                            setDestLocValue(e.target.value);
-                            return fetchAddrSuggestions(e, { inputName: "dest" });
-                        }}
-                        onFocus={() => {
-                            setmyLocValueActive(false);
-                        }}
-                        ref={destinationRef}
-                    />
-                )}
-            />
-
-            <p className="pt-1"></p>
-            
-            <Button fullWidth className="p-3 rounded-pill" variant="contained" disabled={myLocValue.length === 0 || destLocValue.length === 0}>
-                Get Rides
-            </Button>
-
-            <p className="pt-1"></p>
-            <div>{addressSuggestions.map((suggest, index) => (
-                <li key={index} className="list-unstyled" onClick={() => myLocValueActive ? setMyLocValue(suggest.label) : setDestLocValue(suggest.label)}>
-                    <p><LocationOnOutlinedIcon /> {suggest.label}</p>
-                </li>
-            ))}</div>
-
-            <p className="pt-1"></p>
-            {addressSuggestions.length !== 0 && 
-                <p>
-                    Data © OpenStreetMap contributors, ODbL 1.0. <a href="https://osm.org/copyright" target="_blank" rel="noreferrer">
-                         https://osm.org/copyright
-                    </a>
-                </p>
-            }
-        </Fragment>
-    );
-}
 
 const RideDashboard = (props) => {
-    const [userFullName, setUserFullName] = useState("");
+    // const [userFullName, setUserFullName] = useState("");
     const [loggedIn, setloggedIn] = useState();
-    const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0, longitude: 0 });
+    // const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0, longitude: 0 });
+
+    // eslint-disable-next-line no-unused-vars
+    const { selectedFrom, selectedTo, user, currentRide } = useContext(Context);
 
     const { window } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -411,7 +233,7 @@ const RideDashboard = (props) => {
     const [open, setOpen] = useState(false);
 
     
-    let history = useHistory();
+    // let history = useHistory();
     
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -429,10 +251,12 @@ const RideDashboard = (props) => {
     };
     
     const [whereToHeight, setwhereToHeight] = useState(40);
+    // eslint-disable-next-line no-unused-vars
     const [showRides, setShowRides] = useState(false);
     
     async function signoutUser() {
         await signOutUser().then((result) => {
+            console.log(result);
             LocalStorage.saveBool("isLoggedIn", false);
             initialize();
         })
@@ -461,14 +285,14 @@ const RideDashboard = (props) => {
             return <Redirect to="/ride" />;
         }
 
-        const _local = await LocalStorage.getUserForm("UserDetails");
-        setUserFullName(_local.firstname + " " + _local.lastname);
+        // const _local = await LocalStorage.getUserForm("UserDetails");
+        // setUserFullName(_local.firstname + " " + _local.lastname);
         // currentLocation();
     }, []);
 
     useEffect(() => {
         initialize();
-    }, [initialize]);
+    }, []);
 
 
     if (loggedIn === false) {
@@ -621,9 +445,7 @@ const RideDashboard = (props) => {
                     {/* body */}
                     <div className="MapWrapper" sx={{ flexGrow: 1, }}>
                         <MapContainer zoomControl={false} center={
-                            currentLocMap.latitude !== 0
-                                ? [currentLocMap.latitude, currentLocMap.longitude]
-                                : [5.10535, -1.2466]} zoom={14} >
+                            [5.10535, -1.2466]} zoom={14} >
 
                             <TileLayer
                                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -725,7 +547,7 @@ const RideDashboard = (props) => {
 
                                 {/* {whereToHeight === 100 && */}
                                 <div className={whereToHeight === 100 ? "d-block" : "d-none"}>
-                                    <RequestForm heightCallback={() => setwhereToHeight(40)} />
+                                    <AddressPickerForm heightCallback={() => setwhereToHeight(40)} />
                                 </div>
                                 {/* // } */}
 

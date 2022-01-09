@@ -1,32 +1,32 @@
+/* eslint-disable react/prop-types */
 import React, { Fragment, useState, 
     useEffect, useRef } from "react";
 import { 
     Button, 
     Col, Form, 
     Nav, Navbar, Row,
-    Modal,
     Image,
     InputGroup
 } from "react-bootstrap";
 import "./index.css";
-import {
-    MdRemoveRedEye
-} from "react-icons/md";
-import {
-    FaEyeSlash
-} from "react-icons/fa";
+// import {
+//     MdRemoveRedEye
+// } from "react-icons/md";
+// import {
+//     FaEyeSlash
+// } from "react-icons/fa";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import LocalStorage from "../../../services/localStorage";
 import * as uuid from 'uuid';
-import { useHistory, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Box from '@material-ui/core/Box';
+// import Box from '@material-ui/core/Box';
 import { uploadImageToStorage, signOutUser } from "../../../services/firebaseUtils";
 import firebaseCRUDService from "../../../services/firebaseUtils";
 import Slide from '@material-ui/core/Slide';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, withStyles } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
 import imageUploadGlobal from '../../../assets/images/profile_photo_upload.png';
 import { getDownloadURL } from "firebase/storage";
 import Select from 'react-select';
@@ -63,14 +63,14 @@ const vehicleInfoSchema = yup.object({
 }).required();
 
 /// validation 3
-const vehicleDocsSchema = yup.object({
-    vehicleManufacturer: yup.string().required("This field is required"),
-    vehicleModel: yup.string().required("This field is required"),
-    vehicleYear: yup.string().required("This field is required"),
-    licensePlate: yup.string().required("This field is required"),
-    carColor: yup.string().required("This field is required"),
+// const vehicleDocsSchema = yup.object({
+//     vehicleManufacturer: yup.string().required("This field is required"),
+//     vehicleModel: yup.string().required("This field is required"),
+//     vehicleYear: yup.string().required("This field is required"),
+//     licensePlate: yup.string().required("This field is required"),
+//     carColor: yup.string().required("This field is required"),
 
-}).required();
+// }).required();
 
 
 function UploadPhotoModal(props) {
@@ -183,11 +183,12 @@ const DriverOnboarding = () => {
         resolver: yupResolver(vehicleInfoSchema)
     });
     
+    // eslint-disable-next-line no-unused-vars
     const { register: docsInfo, handleSubmit: submitDocsInfo, formState: { errors: docsInfoErrors } } = useForm({
         resolver: yupResolver(schema)
     });
     
-    let history = useHistory();
+    // let history = useHistory();
 
     const [errorMessage, setErrorMessage] = useState("");
     const [userEmail, setUserEmail] = useState("");
@@ -201,7 +202,7 @@ const DriverOnboarding = () => {
     const [isDriversInfoDone, setIsDriversInfoDone] = useState();
     
     // const [carManufacturer, setCarManufacturer] = useState('');
-    const [carYear, setCarYear] = useState(2021);
+    // const [carYear, setCarYear] = useState(2021);
     // const [carColor, setCarColor] = useState('');
     
     const [carModells, setCarModels] = useState([]);
@@ -243,6 +244,7 @@ const DriverOnboarding = () => {
     function getCarModels(brandName) {
         var modelList = [];
         // let carrmodels = carModels;
+        // eslint-disable-next-line no-unused-vars
         for (let [key, value] of Object.entries(carModels)) {
             if(brandName.toLowerCase() === value.brand.toLowerCase()) {
                 // console.log(value.brand);
@@ -363,6 +365,7 @@ const DriverOnboarding = () => {
     }
 
     async function signoutUser() {
+        // eslint-disable-next-line no-unused-vars
         await signOutUser().then((result) => {
             LocalStorage.saveBool("isLoggedIn", false);
             initialize();
@@ -410,7 +413,7 @@ const DriverOnboarding = () => {
 
         switch (type) {
             case "licenseFront":
-                setIsLicenseFrontLoading(true);;
+                setIsLicenseFrontLoading(true);
                 break;
             case "licenseBack":
                 setIsLicenseBackLoading(true);
@@ -519,7 +522,7 @@ const DriverOnboarding = () => {
 
         switch (type) {
             case "licenseFront":
-                setIsLicenseFrontLoading(true);;
+                setIsLicenseFrontLoading(true);
                 break;
             case "licenseBack":
                 setIsLicenseBackLoading(true);
@@ -668,6 +671,7 @@ const DriverOnboarding = () => {
                                             control={control}
                                             defaultValue={""}
                                             // rules={{ required: true }}
+                                            // eslint-disable-next-line no-unused-vars
                                             render={({ field: { onChange, value, name, ref }}) =>
                                             <Select className=""
                                                 ref={ref}
@@ -695,6 +699,7 @@ const DriverOnboarding = () => {
                                             control={control}
                                             defaultValue={""}
                                             // rules={{ required: true }}
+                                            // eslint-disable-next-line no-unused-vars
                                             render={({ field: { onChange, value, name, ref }}) =>
                                             <Select className=""
                                                 ref={ref}
@@ -761,6 +766,7 @@ const DriverOnboarding = () => {
                                             name="carColor"
                                             control={control}
                                             defaultValue={""}
+                                            // eslint-disable-next-line no-unused-vars
                                             render={({ field: { onChange, value, name, ref }}) =>
                                             <Select className=""
                                                 ref={ref}

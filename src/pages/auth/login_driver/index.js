@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Button, Card, Col, Form, InputGroup, Row, } from "react-bootstrap";
+import { Button, Card, Form, InputGroup, } from "react-bootstrap";
 import "./index.css";
 import {
     MdRemoveRedEye
@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import LocalStorage from "../../../services/localStorage";
-import * as uuid from 'uuid';
+// import * as uuid from 'uuid';
 import { useHistory } from "react-router-dom";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';

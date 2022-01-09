@@ -9,10 +9,14 @@ import {
 
  import firebase from '../firebase';
 import { getFirestore, collection, 
-    getDocs, addDoc, doc, updateDoc, query, where} from 'firebase/firestore/lite';
+    getDocs, addDoc, updateDoc, query, where} from 'firebase/firestore/lite';
 import { getStorage, ref, uploadBytesResumable  } from "firebase/storage";
+import { getDatabase, ref as dbRef, onValue, off, 
+    query as dbQuery, orderByChild, equalTo, set } from "firebase/database";
 
 const auth = getAuth();
+const storage = getStorage(firebase);
+const database = getDatabase(firebase);
 
 export function signUpWithEmail(email, password) {
     return new Promise((resolve) =>
@@ -77,6 +81,7 @@ export function recaptchaVerify(phoneNumber) {
     window.recaptchaVerifier = new RecaptchaVerifier('phone-next-btn', {
         'size': 'invisible',
         'callback': (response) => {
+            console.log(response);
             // reCAPTCHA solved, allow signInWithPhoneNumber.
             signUpWithPhone(phoneNumber);
         },
@@ -93,7 +98,7 @@ export function uploadImageToStorage(childReference, file, imageName) {
         contentType: 'image/jpeg',
     };
 
-    const storage = getStorage(firebase);
+    // const storage = getStorage(firebase);
     // Create a storage reference from our storage service
     const storageRef = ref(storage, "images/" + childReference + "/" + imageName);
 
@@ -108,6 +113,78 @@ export function uploadImageToStorage(childReference, file, imageName) {
 // firebase cloud firestore
 const _firestoreUsersDB = getFirestore(firebase);
 const usersCol = collection(_firestoreUsersDB, 'users');
+
+
+ // -- get ride list --
+ export function getRideList() {
+    const rideRef = dbQuery(dbRef(database, 'rides'), orderByChild('status'), equalTo(0));
+
+    const listener = onValue(rideRef, (snapshot) => {
+        const values = snapshot.val();
+        const rides = [];
+
+        if(values) {
+            const keys = Object.keys(values);
+            if (keys && keys.length !== 0) {
+                for (const key of keys) {
+                    rides.push(values[key]);
+                } 
+                return rides;
+            } else {
+                return rides;
+            }
+        } else {
+            return rides;
+        }
+    })
+
+    off(rideRef, listener);
+ }
+
+ // -- get ride list --
+ export function currentRideUtil(currentRide) {
+    const rideRef = dbRef(database, `rides/${currentRide.rideUuid}`);
+
+    onValue(rideRef, (snapshot) => {
+        const updatedRide = snapshot.val();
+        if (updatedRide && updatedRide.rideUuid === currentRide.rideUuid && updatedRide.driver && (updatedRide.status === -1 || updatedRide.status === 2)) {
+            // remove localStorage.
+            localStorage.removeItem('currentRide');
+
+            return true;
+        }
+    })
+
+    return null;
+ }
+
+ // -- created ride --
+ export function createdRideUtil(rideRequest) {
+    const rideRef = dbRef(database, `rides/${rideRequest.rideUuid}`);
+
+    onValue(rideRef, (snapshot) => {
+        const updatedRide = snapshot.val();
+        return updatedRide;
+    })
+
+    return null;
+ }
+
+ // -- accept ride --
+ export function acceptRideDB(request) {
+    return set(dbRef(database, `rides/${request.rideUuid}`), request);
+ }
+
+ // -- create ride --
+ export function createRideDB(rideUuid, ride) {
+    return set(dbRef(database, `rides/${rideUuid}`), ride);
+ }
+
+ // -- update ride --
+ export function updateRideDB(ride) {
+    return set(dbRef(database, `rides/${ride.rideUuid}`), ride);
+ }
+
 
 class firebaseCRUDService {
 

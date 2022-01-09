@@ -8,7 +8,7 @@ import {
 import {
     MdLocationOn
 } from "react-icons/md";
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 class Landing extends Component {
     // state = {};
@@ -76,7 +76,7 @@ class Landing extends Component {
                             className="me-auto"
                         >
                             <Nav.Item>
-                                <Nav.Link eventKey="link-1"><Link to="/ride"> Ride </Link></Nav.Link>
+                                <Nav.Link href="/ride" eventKey="link-1">Ride</Nav.Link>
                             </Nav.Item>
                             
                             <Nav.Item>
