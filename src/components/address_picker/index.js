@@ -19,13 +19,13 @@ function AddressPickerForm(props) {
   const [destLocValue, setDestLocValue] = useState("");
   const [myLocValueActive, setmyLocValueActive] = useState(false);
   
-  const { selectedFrom, setSelectedFrom, selectedTo, setSelectedTo } = useContext(Context);
+  const { selectedFrom, setSelectedFrom, selectedTo, setSelectedTo, setwhereToHeight } = useContext(Context);
 
   const opsProvider = useRef();
   const myLocationRef = useRef();
   const destinationRef = useRef();
 
-  const { toggleModal, heightCallback } = props;
+  const { toggleModal } = props;
 
   const fetchAdd = async () => {
       var lat = 5.10535;
@@ -111,7 +111,7 @@ function AddressPickerForm(props) {
   return (
       <Fragment>
           <p className="pt-1"></p>
-          <ClosedOutlinedIcon className="float-start" onClick={() => heightCallback(true)} />
+          <ClosedOutlinedIcon className="float-start" onClick={() => setwhereToHeight(40)} />
           <p className="fw-bold text-center">Select location</p>
           <p className="pt-1"></p>
 

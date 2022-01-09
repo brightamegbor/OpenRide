@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { Fragment, useState, useRef, useEffect, useCallback, useContext } from "react"
+import React, { Fragment, useState, useEffect, useCallback, useContext } from "react"
 // import { Nav, Navbar } from "react-bootstrap"
 import { signOutUser } from "../../services/firebaseUtils";
 import { Redirect } from "react-router";
@@ -46,6 +46,7 @@ import TextField from '@mui/material/TextField';
 import AddressPickerForm from '../../components/address_picker';
 import Context from "../../Context";
 import RideDetail from "../../components/ride_details";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 // TODO: rides available ui
 
@@ -190,11 +191,13 @@ function LocationMarker() {
     const [bbox, setBbox] = useState([]);
 
     const map = useMap();
-    const routeControl = useRef();
+    const { routeControl } = useContext(Context);
 
     const initRouteControl = () => {
         routeControl.current = L.Routing.control({
-          show: true,
+          show: false,
+          collapseBtn: false,
+          collapsible: false,
           fitSelectedRoutes: true,
           plan: false,
           lineOptions: {
@@ -250,7 +253,8 @@ const RideDashboard = (props) => {
     // const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0, longitude: 0 });
 
     // eslint-disable-next-line no-unused-vars
-    const { selectedFrom, selectedTo, currentRide, whereToHeight, setwhereToHeight } = useContext(Context);
+    const { selectedFrom, selectedTo, currentRide, isLoading, 
+        whereToHeight, setwhereToHeight, user, routeControl } = useContext(Context);
 
     const { window } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -259,7 +263,6 @@ const RideDashboard = (props) => {
     const [open, setOpen] = useState(false);
 
     // const map = useRef();
-    const routeControl = useRef();
 
     
     // let history = useHistory();
@@ -414,12 +417,34 @@ const RideDashboard = (props) => {
     const container = window !== undefined ? () => window().document.body : undefined;
 
     const renderSwipeContent = () => {
-        if (!currentRide) {
+        const isUser = user && user.userType === 'rider';
+
+        if(!isLoading && whereToHeight === 40) {
+            return <TextField
+            fullWidth
+            className="pt-ss3"
+            // {...params}
+            // label="Search destination"
+            placeholder="Where to?"
+            variant="filled"
+            InputProps={{
+                // ...params.InputProps,
+                // type: 'search',
+                startAdornment: 
+                    <InputAdornment position="start"><SearchOutlinedIcon /></InputAdornment>,
+            }}
+        // onChange={(e) => fetchAddrSuggestions(e, { inputName: "dest" })}
+        // ref={destinationRef}
+            value={selectedTo ? selectedTo.label : ""}
+            onClick={() => setwhereToHeight(100)}
+        />
+        }
+        if (isUser && !currentRide && whereToHeight === 100) {
             return <AddressPickerForm heightCallback={() => setwhereToHeight(40)}  />
-          } 
-          if (currentRide) {
-            return <RideDetail user={currentRide.driver} isDriver={false} currentRide={currentRide} />
-          }
+        } 
+        if (isUser && currentRide) {
+        return <RideDetail user={currentRide.driver} isDriver={false} currentRide={currentRide} />
+        }
     }
 
     return (
@@ -591,7 +616,7 @@ const RideDashboard = (props) => {
                             }} variant="rectangular" height="50%" /> */}
 
                             {/* form starts here */}
-                                {whereToHeight === 40 && 
+                                {/* {whereToHeight === 40 && 
                                     <div className="d-flex w-100">
                                         {!showRides ? 
                                             <TextField
@@ -614,12 +639,16 @@ const RideDashboard = (props) => {
                                             : <div></div>
                                         }
                                     </div>
-                                }
+                                } */}
 
                                 {/* {whereToHeight === 100 && */}
-                                <div className={whereToHeight === 100 ? "d-block" : "d-none"}>
+                                {/* className={whereToHeight === 100 ? "d-block" : "d-none"} */}
+                                <div >
                                     {renderSwipeContent()}
                                 </div>
+
+                                
+                                <div className="d-flex justify-content-center mt-4">{isLoading && <CircularProgress />}</div>
                                 {/* // } */}
 
                                 {/* <Form.Group className="mb-3">

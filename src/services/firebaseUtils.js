@@ -155,7 +155,7 @@ const usersCol = collection(_firestoreUsersDB, 'users');
         }
     })
 
-    return null;
+    return false;
  }
 
  // -- created ride --
@@ -167,7 +167,7 @@ const usersCol = collection(_firestoreUsersDB, 'users');
         return updatedRide;
     })
 
-    return null;
+    return [];
  }
 
  // -- accept ride --

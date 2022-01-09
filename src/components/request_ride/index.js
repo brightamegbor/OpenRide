@@ -9,7 +9,8 @@ function RequestRide(props) {
   // get toggleModal functin from higher order components.
   const { toggleModal } = props;
 
-  const { user, selectedFrom, selectedTo, setRideRequest, setIsLoading } = useContext(Context);
+  const { user, selectedFrom, selectedTo, setRideRequest, 
+    setIsLoading, setwhereToHeight } = useContext(Context);
 
   /**
    * request a ride
@@ -19,6 +20,7 @@ function RequestRide(props) {
     if (selectedFrom && selectedTo) {
       // close the modal.
       toggleModal(false);
+      setwhereToHeight(40);
       // show loading indicator. 
       setIsLoading(true);
       // create object.

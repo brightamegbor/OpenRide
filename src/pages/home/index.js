@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import RideDashboard from '../ride_dashboard';
 import Context from '../../Context';
 import { createdRideUtil, currentRideUtil } from '../../services/firebaseUtils';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,17 +17,18 @@ function Home() {
   const [currentRide, setCurrentRide] = useState(null);
 
   const [whereToHeight, setwhereToHeight] = useState(40);
+  const routeControl = useRef();
 
   // eslint-disable-next-line no-unused-vars
   const lookingDriverMaxTime = 30000;
 
   useEffect(() => {
-    // initAuthUser();
+    initUser();
     initCurrentRide();
   }, []);
 
-  useEffect(() => {
-    if (rideRequest) {
+  useEffect(async () => {
+    if (rideRequest){
       // create a timeout to trigger notification if there is no driver.
       const lookingDriverTimeout = setTimeout(() => {
         alert('Cannot find your driver, please re-enter your pickup location and try again');
@@ -40,7 +40,7 @@ function Home() {
       // show loading indicator.
       setIsLoading(true);
       // check data changes from firebase real time database. If there is a driver accepted the request.
-      createdRideUtil(rideRequest).then((updatedRide) => {
+      var updatedRide = await createdRideUtil(rideRequest);
         if(updatedRide && updatedRide.rideUuid === rideRequest.rideUuid && updatedRide.driver) {
           // hide loading indicator.
           setIsLoading(false);
@@ -53,7 +53,7 @@ function Home() {
           // set current Ride. 
           setCurrentRide(() => updatedRide);
         }
-      })
+      // })
     }
   }, [rideRequest]);
 
@@ -80,11 +80,17 @@ function Home() {
     }
   }
 
+  const initUser = () => { 
+    const authenticatedUser = localStorage.getItem('ride-user-data');
+    if (authenticatedUser) { 
+      setUser(JSON.parse(authenticatedUser));
+    }
+  };
+
   return (
     <Context.Provider value={{isLoading, setIsLoading, user, setUser, selectedFrom, setSelectedFrom, selectedTo, setSelectedTo, 
-    rideRequest, setRideRequest, currentRide, setCurrentRide, whereToHeight, setwhereToHeight}}>
+    rideRequest, setRideRequest, currentRide, setCurrentRide, whereToHeight, setwhereToHeight, routeControl}}>
         <RideDashboard />
-        {isLoading && <CircularProgress />}
     </Context.Provider>
   )
 }
