@@ -576,6 +576,8 @@ const RideDashboard = (props) => {
                             onOpen={toggleDrawer(true)}
                             swipeAreaWidth={drawerBleeding}
                             disableSwipeToOpen={false}
+                            variant={"persistent"}
+                            BackdropProps={{ invisible: true }}
                             ModalProps={{
                                 keepMounted: true,
                             }}

@@ -29,3 +29,7 @@
 .blinking {
   animation: fade 1s infinite alternate;
 }
+
+.leaflet-routing-container.leaflet-bar.leaflet-routing-container-hide.leaflet-control {
+  display: none;
+}

@@ -28,14 +28,14 @@ function AddressPickerForm(props) {
   const { toggleModal } = props;
 
   const fetchAdd = async () => {
-      var lat = 5.10535;
-      var lng = -1.2466;
+    //   var lat = 5.10535;
+    //   var lng = -1.2466;
 
       navigator.geolocation.getCurrentPosition(
           (position) => {
               // this.setState({
-              lng = position.coords.longitude;
-              lat = position.coords.latitude;
+              var lng = position.coords.longitude;
+              var lat = position.coords.latitude;
 
               // console.log(lng);
 
@@ -44,8 +44,12 @@ function AddressPickerForm(props) {
               fetch(nominatimURL)
                   .then(response => response.json())
                   .then(async data => {
-                      await setMyLocValue(data.address.city !== undefined ? data.address.city : data.address.town);
-                      myLocationRef.current.value = data.address.city !== undefined ? data.address.city : data.address.town;
+                    //   console.log(data);
+                      await setMyLocValue(
+                          data.address.city !== undefined ? data.address.city 
+                          : data.address.town !== undefined ? data.address.town : data.address.county);
+                      myLocationRef.current.value = data.address.city !== undefined ? data.address.city 
+                      : data.address.town !== undefined ? data.address.town : data.address.county;
                       // console.log(data.address.city !== undefined ? data.address.city : data.address.town);
                   })
               // });
@@ -99,6 +103,7 @@ function AddressPickerForm(props) {
             // set pick up location.
             setMyLocValue(() => selectedLocation.label);
             setSelectedFrom(() => selectedLocation);
+            setAddressSuggestions(() => []);
           } else {
             // set destination.
             setDestLocValue(() => selectedLocation.label);
@@ -133,7 +138,7 @@ function AddressPickerForm(props) {
                           type: 'search',
                           endAdornment: (
                               <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
-                                  {(myLocValue.length !== 0 && myLocationRef.current === document.activeElement) && <ClosedOutlinedIcon onClick={() => setMyLocValue("")} />}
+                                  {(myLocValue.trim() != "" && myLocationRef.current === document.activeElement) && <ClosedOutlinedIcon onClick={() => setMyLocValue("")} />}
                               </Box>
                           ),
                       }}
@@ -170,7 +175,7 @@ function AddressPickerForm(props) {
                           type: 'search',
                           endAdornment: (
                               <Box sx={{ display: 'flex', alignSelf: 'baseline' }}>
-                                  {(destLocValue.length !== 0 && destinationRef.current === document.activeElement) && <ClosedOutlinedIcon onClick={() => setDestLocValue("")} />}
+                                  {(destLocValue.trim() != "" && destinationRef.current === document.activeElement) && <ClosedOutlinedIcon onClick={() => setDestLocValue("")} />}
                               </Box>
                           ),
                       }}
