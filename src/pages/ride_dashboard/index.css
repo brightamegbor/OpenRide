@@ -30,6 +30,18 @@
   animation: fade 1s infinite alternate;
 }
 
-.leaflet-routing-container.leaflet-bar.leaflet-routing-container-hide.leaflet-control {
+.leaflet-routing-container.leaflet-bar.leaflet-routing-container-hide.leaflet-control h2, 
+.leaflet-routing-container.leaflet-bar.leaflet-routing-container-hide.leaflet-control table,
+.leaflet-routing-alt-minimized h3 {
   display: none;
 }
+
+.leaflet-routing-container.leaflet-bar.leaflet-routing-container-hide.leaflet-control {
+  border: none !important;
+}
+
+.leaflet-routing-alternatives-container .leaflet-routing-alt:first-child {
+  background-color: white;
+  padding: 2px 5px;
+  border-radius: 9px;
+} 
