@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 import Context from '../../Context';
 // import { useHistory } from 'react-router-dom';
 import { updateRideDB } from '../../services/firebaseUtils';
+import { Button } from "@mui/material";
 
 function RideDetail(props) { 
   const { user, isDriver, currentRide } = props;
@@ -77,8 +78,8 @@ function RideDetail(props) {
         <p className="ride-detail__result-label"><span>From: </span>{currentRide.pickup && currentRide.pickup.label ? currentRide.pickup.label : ''}</p>
         <p className="ride-detail__result-label"><span>To: </span>{currentRide.destination && currentRide.destination.label ? currentRide.destination.label : ''}</p>
         {/* <button className="ride-detail__btn" onClick={talkToUser}>{isDriver ? 'Talk to User' : 'Talk to Driver'}</button> */}
-        <button className="ride-detail__btn" onClick={cancelRide}>Cancel the Ride</button>
-        {isDriver && <button className="ride-detail__btn" onClick={finishRide}>Finish the Ride</button>}
+        <Button variant="contained" color='error' onClick={cancelRide}>Cancel the Ride</Button>
+        {isDriver && <Button variant="contained" color='success' className="ms-4" onClick={finishRide}>Finish the Ride</Button>}
       </div>
     </div>
   );
