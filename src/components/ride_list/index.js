@@ -88,6 +88,12 @@ function RideList() {
       </div>
       <div className="ride-list__content">
         {renderRideList()}
+      </div>
+      <div className="margin-bottom-10">
+        <p></p>
+        <p></p>
+        <p></p>
+        <p></p>
       </div>  
     </div>
   );
