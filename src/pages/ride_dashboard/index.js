@@ -419,7 +419,7 @@ const RideDashboard = (props) => {
     const renderSwipeContent = () => {
         const isUser = user && user.userType === 'rider';
 
-        if(!isLoading && whereToHeight === 40) {
+        if(!isLoading && whereToHeight === 40 && !currentRide) {
             return <TextField
             fullWidth
             className="pt-ss3"
@@ -443,6 +443,7 @@ const RideDashboard = (props) => {
             return <AddressPickerForm heightCallback={() => setwhereToHeight(40)}  />
         } 
         if (isUser && currentRide) {
+            setwhereToHeight(60)
         return <RideDetail user={currentRide.driver} isDriver={false} currentRide={currentRide} />
         }
     }
@@ -601,7 +602,7 @@ const RideDashboard = (props) => {
                                 <Puller sx={{
                                     display: { xs: 'block', sm: 'none' }
                                 }} />
-                                <Typography sx={{ p: 3, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}></Typography>
+                                <Typography sx={{ p: 3.8, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}></Typography>
                             </StyledBox>
                             <StyledBox
                                 sx={{

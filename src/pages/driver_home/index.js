@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import RideDashboard from '../ride_dashboard';
 import Context from '../../Context';
 import { createdRideUtil, currentRideUtil } from '../../services/firebaseUtils';
+import DriverDashboard from '../driver_dashboard';
 import { onValue } from "firebase/database";
 
-function Home() {
+function DriverHome() {
   const [isLoading, setIsLoading] = useState(false);
   // user state contains authenticated user.
   const [user, setUser] = useState(null);
@@ -17,7 +17,7 @@ function Home() {
   // current ride.
   const [currentRide, setCurrentRide] = useState(null);
 
-  const [whereToHeight, setwhereToHeight] = useState(40);
+  const [whereToHeight, setwhereToHeight] = useState(55);
   const routeControl = useRef();
 
   // eslint-disable-next-line no-unused-vars
@@ -41,11 +41,7 @@ function Home() {
       // show loading indicator.
       setIsLoading(true);
       // check data changes from firebase real time database. If there is a driver accepted the request.
-      var updatedRideRef = createdRideUtil(rideRequest);
-
-      onValue(updatedRideRef, (snapshot) => {
-        const updatedRide = snapshot.val();
-        
+      var updatedRide = await createdRideUtil(rideRequest);
         if(updatedRide && updatedRide.rideUuid === rideRequest.rideUuid && updatedRide.driver) {
           // hide loading indicator.
           setIsLoading(false);
@@ -58,7 +54,6 @@ function Home() {
           // set current Ride. 
           setCurrentRide(() => updatedRide);
         }
-    })
       // })
     }
   }, [rideRequest]);
@@ -94,7 +89,7 @@ function Home() {
   }
 
   const initUser = () => { 
-    const authenticatedUser = localStorage.getItem('ride-user-data');
+    const authenticatedUser = localStorage.getItem('UserDetails');
     if (authenticatedUser) { 
       setUser(JSON.parse(authenticatedUser));
     }
@@ -103,9 +98,9 @@ function Home() {
   return (
     <Context.Provider value={{isLoading, setIsLoading, user, setUser, selectedFrom, setSelectedFrom, selectedTo, setSelectedTo, 
     rideRequest, setRideRequest, currentRide, setCurrentRide, whereToHeight, setwhereToHeight, routeControl}}>
-        <RideDashboard />
+        <DriverDashboard />
     </Context.Provider>
   )
 }
 
-export default Home
+export default DriverHome

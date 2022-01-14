@@ -4,10 +4,10 @@ import RegisterDriver from '../pages/auth/register_driver';
 import DriverOnboarding from '../pages/auth/driver_onboarding';
 import Landing from '../pages/landing/landing';
 import LoginDriver from '../pages/auth/login_driver';
-import DriverDashboard from '../pages/driver_dashboard';
 import RegisterRide from '../pages/auth/ride';
 import NotFoundComponent from '../pages/not_found';
 import Home from '../pages/home';
+import DriverHome from '../pages/driver_home';
 
 export default function Routes() {
     return (
@@ -16,7 +16,7 @@ export default function Routes() {
             <Route path="/register-driver" exact component={withRouter(RegisterDriver)} />
             <Route path="/register-driver/onboarding/:id" exact component={withRouter(DriverOnboarding)} />
             <Route path="/login-driver" exact component={withRouter(LoginDriver)} />
-            <Route path="/driver-dashboard" exact component={withRouter(DriverDashboard)} />
+            <Route path="/driver-dashboard" exact component={withRouter(DriverHome)} />
             <Route path="/ride" exact component={withRouter(RegisterRide)} />
             <Route path="/ride-home" exact component={withRouter(Home)} />
             <Route path="/*" exact component={withRouter(NotFoundComponent)} />

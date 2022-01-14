@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
-import React, { Fragment, useState, useEffect, useCallback } from "react"
+import React, { Fragment, useState, useEffect, useCallback, 
+    useContext } from "react"
 // import { Nav, Navbar } from "react-bootstrap"
 import { signOutUser } from "../../services/firebaseUtils";
 import { Redirect } from "react-router";
@@ -39,6 +40,10 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 // import Skeleton from '@mui/material/Skeleton';
 import { grey } from '@mui/material/colors';
 import { Global } from '@emotion/react';
+import Context from "../../Context";
+import RideDetail from "../../components/ride_details";
+import RideList from "../../components/ride_list";
+import { getAuth } from "firebase/auth";
 
 const drawerWidth = 240;
 
@@ -214,6 +219,8 @@ const DriverDashboard = (props) => {
     const [loggedIn, setloggedIn] = useState();
     // const [currentLocMap, setCurrentLocMap] = useState({ latitude: 0,  longitude: 0 });
 
+    const { currentRide, whereToHeight, user, } = useContext(Context);
+
     const { window } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -229,7 +236,7 @@ const DriverDashboard = (props) => {
     };
 
     // ride request drawer mobile
-    const [openRequest, setOpenRequest] = useState(false);
+    const [openRequest, setOpenRequest] = useState(true);
 
     const toggleDrawer = (newOpen) => () => {
         setOpenRequest(newOpen);
@@ -260,6 +267,12 @@ const DriverDashboard = (props) => {
         const _loggedIn = await LocalStorage.getBool("isLoggedIn");
         setloggedIn(_loggedIn);
 
+        var user = getAuth().currentUser;
+
+        if(user == null) {
+            return <Redirect to="/login-driver" />;
+        }
+
         // const _local = await LocalStorage.getUserForm("UserDetails");
         // setUserFullName(_local.firstname + " " + _local.lastname);
         // currentLocation();
@@ -267,7 +280,7 @@ const DriverDashboard = (props) => {
 
     useEffect(() => {
         initialize();
-    }, [initialize]);
+    }, []);
 
 
     if (loggedIn === false) {
@@ -325,6 +338,17 @@ const DriverDashboard = (props) => {
     );
 
     const container = window !== undefined ? () => window().document.body : undefined;
+
+    const renderSwipeContent = () => {
+        const isUser = user && user.userType === 'driver';
+        
+        if (isUser && !currentRide) {
+          return <RideList />
+        }
+        if (isUser && currentRide) {
+          return <RideDetail user={currentRide.requestor} isDriver={true} currentRide={currentRide} />
+        }
+      }
 
     return (
         <Fragment>
@@ -417,8 +441,8 @@ const DriverDashboard = (props) => {
                     <Toolbar className="top-toolbar" />
                     {/* body */}
                     <div className="MapWrapper" sx={{ flexGrow: 1, }}>
-                        <MapContainer center={
-                            [5.10535, -1.2466]} zoom={15} >
+                        <MapContainer zoomControl={false} center={
+                            [5.10535, -1.2466]} zoom={14} >
 
                             <TileLayer
                                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -436,7 +460,7 @@ const DriverDashboard = (props) => {
                         <Global
                             styles={{
                                 '.MuiSwipeDrawer > .MuiPaper-root': {
-                                    height: `calc(50% - ${drawerBleeding}px)`,
+                                    height: `calc(${whereToHeight}% - ${drawerBleeding}px)`,
                                     overflow: 'visible',
                                 },
                             }}
@@ -453,6 +477,8 @@ const DriverDashboard = (props) => {
                             onOpen={toggleDrawer(true)}
                             swipeAreaWidth={drawerBleeding}
                             disableSwipeToOpen={false}
+                            variant={"persistent"}
+                            BackdropProps={{ invisible: true }}
                             ModalProps={{
                                 keepMounted: true,
                             }}
@@ -476,7 +502,7 @@ const DriverDashboard = (props) => {
                             <Puller sx={{
                                 display: { xs: 'block', sm: 'none' }
                             }} />
-                                <Typography sx={{ p: 2, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}>Ride requests (0)</Typography>
+                                <Typography sx={{ p: 3.5, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}></Typography>
                         </StyledBox>
                         <StyledBox
                             sx={{
@@ -491,7 +517,10 @@ const DriverDashboard = (props) => {
                                 display: { xs: 'block', sm: 'none' }
                             }} variant="rectangular" height="50%" /> */}
 
-                            <Typography>No live request available</Typography>
+                            {/* <Typography>No live request available</Typography> */}
+                            <div>
+                               {renderSwipeContent()}
+                            </div>
                         </StyledBox>
                     </SwipeableDrawer>
                     </Root>

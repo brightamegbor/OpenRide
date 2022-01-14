@@ -11,7 +11,7 @@ import {
 import { getFirestore, collection, 
     getDocs, addDoc, updateDoc, query, where} from 'firebase/firestore/lite';
 import { getStorage, ref, uploadBytesResumable  } from "firebase/storage";
-import { getDatabase, ref as dbRef, onValue, off, 
+import { getDatabase, ref as dbRef, 
     query as dbQuery, orderByChild, equalTo, set } from "firebase/database";
 
 const auth = getAuth();
@@ -117,57 +117,17 @@ const usersCol = collection(_firestoreUsersDB, 'users');
 
  // -- get ride list --
  export function getRideList() {
-    const rideRef = dbQuery(dbRef(database, 'rides'), orderByChild('status'), equalTo(0));
-
-    const listener = onValue(rideRef, (snapshot) => {
-        const values = snapshot.val();
-        const rides = [];
-
-        if(values) {
-            const keys = Object.keys(values);
-            if (keys && keys.length !== 0) {
-                for (const key of keys) {
-                    rides.push(values[key]);
-                } 
-                return rides;
-            } else {
-                return rides;
-            }
-        } else {
-            return rides;
-        }
-    })
-
-    off(rideRef, listener);
+    return dbQuery(dbRef(database, 'rides'), orderByChild('status'), equalTo(0));
  }
 
  // -- get ride list --
  export function currentRideUtil(currentRide) {
-    const rideRef = dbRef(database, `rides/${currentRide.rideUuid}`);
-
-    onValue(rideRef, (snapshot) => {
-        const updatedRide = snapshot.val();
-        if (updatedRide && updatedRide.rideUuid === currentRide.rideUuid && updatedRide.driver && (updatedRide.status === -1 || updatedRide.status === 2)) {
-            // remove localStorage.
-            localStorage.removeItem('currentRide');
-
-            return true;
-        }
-    })
-
-    return false;
+    return dbRef(database, `rides/${currentRide.rideUuid}`);
  }
 
  // -- created ride --
  export function createdRideUtil(rideRequest) {
-    const rideRef = dbRef(database, `rides/${rideRequest.rideUuid}`);
-
-    onValue(rideRef, (snapshot) => {
-        const updatedRide = snapshot.val();
-        return updatedRide;
-    })
-
-    return [];
+    return dbRef(database, `rides/${rideRequest.rideUuid}`);
  }
 
  // -- accept ride --

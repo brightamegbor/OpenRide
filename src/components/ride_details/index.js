@@ -70,9 +70,9 @@ function RideDetail(props) {
   return (
     <div className="ride-detail">
       <div className="ride-detail__user-avatar">
-        <img src={user.avatar} alt={user.email} />
+        <img width={60} height={70} src={user.profile_photo} alt={user.email} />
       </div>
-      <p className="ride-detail__user-info">{user.email} - {user.phone}</p>
+      <p className="ride-detail__user-info">{user.email} - {user.mobileNumber}</p>
       <div className="ride-detail__actions">
         <p className="ride-detail__result-label"><span>From: </span>{currentRide.pickup && currentRide.pickup.label ? currentRide.pickup.label : ''}</p>
         <p className="ride-detail__result-label"><span>To: </span>{currentRide.destination && currentRide.destination.label ? currentRide.destination.label : ''}</p>
