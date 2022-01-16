@@ -41,7 +41,7 @@ function DriverHome() {
       // show loading indicator.
       setIsLoading(true);
       // check data changes from firebase real time database. If there is a driver accepted the request.
-      var updatedRide = await createdRideUtil(rideRequest);
+      var updatedRide = createdRideUtil(rideRequest);
         if(updatedRide && updatedRide.rideUuid === rideRequest.rideUuid && updatedRide.driver) {
           // hide loading indicator.
           setIsLoading(false);

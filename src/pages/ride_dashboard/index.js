@@ -48,7 +48,6 @@ import Context from "../../Context";
 import RideDetail from "../../components/ride_details";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-// TODO: rides available ui
 
 require("leaflet-routing-machine");
 
@@ -191,7 +190,7 @@ function LocationMarker() {
     const [bbox, setBbox] = useState([]);
 
     const map = useMap();
-    const { routeControl } = useContext(Context);
+    const { routeControl, setPrice, setDistance } = useContext(Context);
 
     const initRouteControl = () => {
         routeControl.current = L.Routing.control({
@@ -209,10 +208,20 @@ function LocationMarker() {
               }
             ]
           },
-          router: L.Routing.mapbox(`${process.env.REACT_APP_MAPBOX_ACCESSTOKEN}`)
+          router: L.Routing.mapbox(`${process.env.REACT_APP_MAPBOX_ACCESSTOKEN}`),
         })
-          .addTo(map)
-          .getPlan();  
+        .on('routeselected', function(e) {
+            var routes = e.route;
+            var summary = routes.summary;
+            var time = Math.round(summary.totalTime % 3600 / 60);
+            // alert distance and time in km and minutes
+            // console.log('Total distance is ' + summary.totalDistance / 1000 + ' km and total time is ' + time + ' minutes');
+            // console.log("your price is: " + time * 0.55);
+            setPrice(Math.round(time * 0.55))
+            setDistance(Math.round(summary.totalDistance / 1000).toString() + ' km')
+         })
+        .addTo(map)
+        .getPlan();  
       };
 
     useEffect(() => {
@@ -319,6 +328,15 @@ const RideDashboard = (props) => {
           const fromLatLng = new L.LatLng(from.y, from.x);
           const toLatLng = new L.LatLng(to.y, to.x);
           routeControl.current.setWaypoints([fromLatLng, toLatLng]);
+
+          console.log(L.latLng(fromLatLng).distanceTo(toLatLng));
+
+          routeControl.current.on('routeselected', function(e) {
+            var routes = e.routes;
+            var summary = routes[0].summary;
+            // alert distance and time in km and minutes
+            alert('Total distance is ' + summary.totalDistance / 1000 + ' km and total time is ' + Math.round(summary.totalTime % 3600 / 60) + ' minutes');
+         });
         }
       }, []);
 

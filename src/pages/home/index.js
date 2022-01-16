@@ -18,6 +18,8 @@ function Home() {
   const [currentRide, setCurrentRide] = useState(null);
 
   const [whereToHeight, setwhereToHeight] = useState(40);
+  const [price, setPrice] = useState(0);
+  const [distance, setDistance] = useState("");
   const routeControl = useRef();
 
   // eslint-disable-next-line no-unused-vars
@@ -102,7 +104,8 @@ function Home() {
 
   return (
     <Context.Provider value={{isLoading, setIsLoading, user, setUser, selectedFrom, setSelectedFrom, selectedTo, setSelectedTo, 
-    rideRequest, setRideRequest, currentRide, setCurrentRide, whereToHeight, setwhereToHeight, routeControl}}>
+    rideRequest, setRideRequest, currentRide, setCurrentRide, whereToHeight, setwhereToHeight, routeControl, 
+    price, setPrice, distance, setDistance}}>
         <RideDashboard />
     </Context.Provider>
   )
