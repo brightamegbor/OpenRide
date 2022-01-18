@@ -5,9 +5,13 @@ import Context from '../../Context';
 // import { useHistory } from 'react-router-dom';
 import { updateRideDB } from '../../services/firebaseUtils';
 import { Button } from "@mui/material";
+import ComfortImage from "../../assets/images/category-comfort.png";
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
+import PersonIcon from '@mui/icons-material/Person';
 
-function RideDetail(props) { 
-  const { user, isDriver, currentRide } = props;
+function ConfirmRide(props) { 
+  // user, 
+  const { isDriver, currentRide } = props;
 
   const { setCurrentRide, setIsLoading } = useContext(Context);
 
@@ -52,14 +56,14 @@ function RideDetail(props) {
   /**
    * finish ride
    */
-  const finishRide = () => {
-    const isFinish = window.confirm('Do you want to finish this ride?');
-    if (isFinish) {
-      // update data on Firebase.
-      currentRide.status = 2;
-      updateRide(currentRide);
-    }
-  };
+  // const finishRide = () => {
+  //   const isFinish = window.confirm('Do you want to finish this ride?');
+  //   if (isFinish) {
+  //     // update data on Firebase.
+  //     currentRide.status = 2;
+  //     updateRide(currentRide);
+  //   }
+  // };
 
   /**
    * finish ride
@@ -89,20 +93,26 @@ function RideDetail(props) {
 
   return (
     <div className="ride-detail">
-      <div className="ride-detail__user-avatar">
-        <img width={60} height={70} src={user.profile_photo} alt={user.email} />
+      <div className="d-flex flex-row justify-content-between bg-success bg-opacity-10 ps-3 pe-3 pt-2 override-mg">
+        <div className='d-flex flex-row'>
+          <img width={70} height={40} src={ComfortImage} alt="category_comfort" />
+          <p className='p-4'></p>
+          <div className='d-flex flex-column'>
+              <p className="fw-bolder mb-0"><span>Standard </span><InfoOutlined fontSize='10px' /></p>
+              <p className="mb-1"><PersonIcon fontSize='10px' /> 4 seats</p>
+          </div>
+        </div>
+        <p className="fw-bolder">{currentRide.price}</p>
       </div>
-      <p className="ride-detail__user-info">{user.email} - {user.mobileNumber}</p>
       <div className="ride-detail__actions">
-        <p className="ride-detail__result-label"><span>From: </span>{currentRide.pickup && currentRide.pickup.label ? currentRide.pickup.label : ''}</p>
-        <p className="ride-detail__result-label"><span>To: </span>{currentRide.destination && currentRide.destination.label ? currentRide.destination.label : ''}</p>
+        <p className='p-2'></p>
+        {/* <p className="ride-detail__result-label"><span>To: </span>{currentRide.destination && currentRide.destination.label ? currentRide.destination.label : ''}</p> */}
         {/* <button className="ride-detail__btn" onClick={talkToUser}>{isDriver ? 'Talk to User' : 'Talk to Driver'}</button> */}
-        <Button variant="contained" color='error' onClick={cancelRide}>Cancel the Ride</Button>
-        {(isDriver && currentRide.status === 1) && <Button variant="contained" color='success' className="ms-4" onClick={finishRide}>Finish the Ride</Button>}
-        {(isDriver && currentRide.status === 5) && <Button variant="contained" color='success' className="ms-4" onClick={confirmRideDriver}>Confirm ride</Button>}
+        <Button variant="contained" color='error' className="text-capitalize rounded-pill" onClick={cancelRide}>Cancel The Ride</Button>
+        {(!isDriver && currentRide.status === 3) && <Button variant="contained" color='success' className="ms-4 text-capitalize rounded-pill" onClick={confirmRideDriver}>Select Standard</Button>}
       </div>
     </div>
   );
 }
 
-export default RideDetail;
+export default ConfirmRide;

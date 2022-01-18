@@ -36,3 +36,7 @@ html, body {
 .margin-bottom-10 {
   margin-bottom: 10rem;
 }
+
+.override-mg {
+  margin: 0 -16px !important;
+}

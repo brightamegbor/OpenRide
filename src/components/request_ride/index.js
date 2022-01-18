@@ -10,7 +10,7 @@ function RequestRide(props) {
   const { toggleModal } = props;
 
   const { user, selectedFrom, selectedTo, setRideRequest, 
-    setIsLoading, setwhereToHeight, distance, price } = useContext(Context);
+    setIsLoading, setwhereToHeight, distance, price, time } = useContext(Context);
 
   /**
    * request a ride
@@ -32,6 +32,7 @@ function RequestRide(props) {
         "destination": selectedTo,
         "distance": distance,
         "price": `GHS ${price}`,
+        "time": time,
         "status": 0
       }
       // insert to Firebase realtime database.

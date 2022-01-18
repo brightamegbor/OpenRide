@@ -44,7 +44,7 @@ function RideList() {
   const acceptRide = (request) => {
     // set up driver information for the request.
     request.driver = user;
-    request.status = 1;
+    request.status = 3;
     // show loading indicator.
     setIsLoading(true);
     acceptRideDB(request).then(() => {
@@ -61,6 +61,10 @@ function RideList() {
     });
   };
 
+  /**
+   * confirm ride
+   */
+
   const renderRideList = () => {
     if (rideRequests && rideRequests.length !== 0) {
       return rideRequests.map(request => (
@@ -72,7 +76,7 @@ function RideList() {
             <p><strong>From: </strong>{request.pickup && request.pickup.label ? request.pickup.label : ''}</p>
             <p><strong>To: </strong>{request.destination && request.destination.label ? request.destination.label : ''}</p>
             <Button className="mb-4" variant="contained" onClick={() => acceptRide(request)}>Accept</Button>
-          </div>
+           </div>
         </div>  
       ))
     } else { 

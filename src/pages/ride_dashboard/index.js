@@ -47,6 +47,7 @@ import AddressPickerForm from '../../components/address_picker';
 import Context from "../../Context";
 import RideDetail from "../../components/ride_details";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import ConfirmRide from "../../components/confirm_ride";
 
 
 require("leaflet-routing-machine");
@@ -190,7 +191,7 @@ function LocationMarker() {
     const [bbox, setBbox] = useState([]);
 
     const map = useMap();
-    const { routeControl, setPrice, setDistance } = useContext(Context);
+    const { routeControl, setPrice, setDistance, setTime } = useContext(Context);
 
     const initRouteControl = () => {
         routeControl.current = L.Routing.control({
@@ -219,6 +220,7 @@ function LocationMarker() {
             // console.log("your price is: " + time * 0.55);
             setPrice(Math.round(time * 0.55))
             setDistance(Math.round(summary.totalDistance / 1000).toString() + ' km')
+            setTime(time + " mins")
          })
         .addTo(map)
         .getPlan();  
@@ -329,14 +331,6 @@ const RideDashboard = (props) => {
           const toLatLng = new L.LatLng(to.y, to.x);
           routeControl.current.setWaypoints([fromLatLng, toLatLng]);
 
-          console.log(L.latLng(fromLatLng).distanceTo(toLatLng));
-
-          routeControl.current.on('routeselected', function(e) {
-            var routes = e.routes;
-            var summary = routes[0].summary;
-            // alert distance and time in km and minutes
-            alert('Total distance is ' + summary.totalDistance / 1000 + ' km and total time is ' + Math.round(summary.totalTime % 3600 / 60) + ' minutes');
-         });
         }
       }, []);
 
@@ -460,9 +454,13 @@ const RideDashboard = (props) => {
         if (isUser && !currentRide && whereToHeight === 100) {
             return <AddressPickerForm heightCallback={() => setwhereToHeight(40)}  />
         } 
-        if (isUser && currentRide) {
+        if (isUser && currentRide && currentRide.status === 3) {
             setwhereToHeight(60)
-        return <RideDetail user={currentRide.driver} isDriver={false} currentRide={currentRide} />
+            return <ConfirmRide user={currentRide.driver} isDriver={false} currentRide={currentRide} />
+        }
+        if (isUser && currentRide && currentRide.status === 1) {
+            setwhereToHeight(60)
+            return <RideDetail user={currentRide.driver} isDriver={false} currentRide={currentRide} />
         }
     }
 
