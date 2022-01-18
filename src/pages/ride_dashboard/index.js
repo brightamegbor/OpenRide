@@ -214,9 +214,9 @@ function LocationMarker() {
         .on('routeselected', function(e) {
             var routes = e.route;
             var summary = routes.summary;
-            var time = Math.round(summary.totalTime % 3600 / 60);
+            var time = Math.round(summary.totalTime / 60);
             // alert distance and time in km and minutes
-            // console.log('Total distance is ' + summary.totalDistance / 1000 + ' km and total time is ' + time + ' minutes');
+            console.log('Total distance is ' + summary.totalDistance / 1000 + ' km and total time is ' + time + ' minutes');
             // console.log("your price is: " + time * 0.55);
             setPrice(Math.round(time * 0.55))
             setDistance(Math.round(summary.totalDistance / 1000).toString() + ' km')
