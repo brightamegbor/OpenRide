@@ -72,7 +72,7 @@ function ConfirmRide(props) {
     const isConfirm = window.confirm('Confirm ride?');
     if (isConfirm) {
       // update data on Firebase.
-      currentRide.status = 1;
+      currentRide.status = 5;
       // show loading indicator.
       setIsLoading(true);
       // update data on Firebase.

@@ -1,17 +1,36 @@
 /* eslint-disable react/prop-types */
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Context from '../../Context';
 // import { useHistory } from 'react-router-dom';
-import { updateRideDB } from '../../services/firebaseUtils';
+import { currentRideUtil, updateRideDB } from '../../services/firebaseUtils';
 import { Button } from "@mui/material";
+import { off, onValue } from 'firebase/database';
 
 function RideDetail(props) { 
   const { user, isDriver, currentRide } = props;
 
   const { setCurrentRide, setIsLoading } = useContext(Context);
 
-  // const history = useHistory();
+  const [driverConfirm, setDriverConfirm] = useState(false);
+
+  useEffect(() => {
+    const rideListQ = currentRideUtil(currentRide);
+
+    const listener = onValue(rideListQ, (snapshot) => {
+      const value = snapshot.val();
+
+      if (value && value.rideUuid === currentRide.rideUuid && value.status === 5) {
+        localStorage.setItem('currentRide', JSON.stringify(value));
+
+        setDriverConfirm(true);
+
+        setCurrentRide(value);
+      }
+  })
+
+  return () => {  off(rideListQ, listener);}
+  }, []);
 
   /**
    * remove ride from storage and context
@@ -74,6 +93,8 @@ function RideDetail(props) {
       // update data on Firebase.
       updateRideDB(currentRide).then(() => {
         setIsLoading(false);
+        setCurrentRide(currentRide);
+        localStorage.setItem('currentRide', JSON.stringify(currentRide));
       }).catch(() => {
         setIsLoading(false);
       });
@@ -99,7 +120,7 @@ function RideDetail(props) {
         {/* <button className="ride-detail__btn" onClick={talkToUser}>{isDriver ? 'Talk to User' : 'Talk to Driver'}</button> */}
         <Button variant="contained" color='error' onClick={cancelRide}>Cancel the Ride</Button>
         {(isDriver && currentRide.status === 1) && <Button variant="contained" color='success' className="ms-4" onClick={finishRide}>Finish the Ride</Button>}
-        {(isDriver && currentRide.status === 5) && <Button variant="contained" color='success' className="ms-4" onClick={confirmRideDriver}>Confirm ride</Button>}
+        {(isDriver && driverConfirm && currentRide.status === 5) && <Button variant="contained" color='success' className="ms-4" onClick={confirmRideDriver}>Confirm ride</Button>}
       </div>
     </div>
   );
