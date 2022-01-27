@@ -45,3 +45,7 @@
   padding: 2px 5px;
   border-radius: 9px;
 } 
+
+.cursor-pointer {
+  cursor: pointer;
+}

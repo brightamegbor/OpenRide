@@ -195,7 +195,7 @@ function AddressPickerForm(props) {
 
           <p className="pt-1"></p>
           <div>{addressSuggestions.map((suggest, index) => (
-              <li key={index} className="list-unstyled" onClick={() => locationSelected(suggest)}>
+              <li key={index} className="list-unstyled cursor-pointer" onClick={() => locationSelected(suggest)}>
                   <p><LocationOnOutlinedIcon /> {suggest.label}</p>
               </li>
           ))}</div>

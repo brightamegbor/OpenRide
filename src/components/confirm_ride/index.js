@@ -53,21 +53,7 @@ function ConfirmRide(props) {
     }
   };
 
-  /**
-   * finish ride
-   */
-  // const finishRide = () => {
-  //   const isFinish = window.confirm('Do you want to finish this ride?');
-  //   if (isFinish) {
-  //     // update data on Firebase.
-  //     currentRide.status = 2;
-  //     updateRide(currentRide);
-  //   }
-  // };
-
-  /**
-   * finish ride
-   */
+  
   const confirmRideDriver = () => {
     const isConfirm = window.confirm('Confirm ride?');
     if (isConfirm) {
@@ -84,15 +70,8 @@ function ConfirmRide(props) {
     }
   };
 
-  /**
-   * talk to user
-   */
-  // const talkToUser = () => {
-  //   history.push('/chat');
-  // };
-
   return (
-    <div className="ride-detail">
+    <div className="">
       <div className="d-flex flex-row justify-content-between bg-success bg-opacity-10 ps-3 pe-3 pt-2 override-mg">
         <div className='d-flex flex-row'>
           <img width={70} height={40} src={ComfortImage} alt="category_comfort" />
@@ -104,12 +83,9 @@ function ConfirmRide(props) {
         </div>
         <p className="fw-bolder">{currentRide.price}</p>
       </div>
-      <div className="ride-detail__actions">
-        <p className='p-2'></p>
-        {/* <p className="ride-detail__result-label"><span>To: </span>{currentRide.destination && currentRide.destination.label ? currentRide.destination.label : ''}</p> */}
-        {/* <button className="ride-detail__btn" onClick={talkToUser}>{isDriver ? 'Talk to User' : 'Talk to Driver'}</button> */}
+      <div className="d-flex flex-row justify-content-center flex-wrap gap-3 pt-4">
         <Button variant="contained" color='error' className="text-capitalize rounded-pill" onClick={cancelRide}>Cancel The Ride</Button>
-        {(!isDriver && currentRide.status === 3) && <Button variant="contained" color='success' className="ms-4 text-capitalize rounded-pill" onClick={confirmRideDriver}>Select Standard</Button>}
+        {(!isDriver && currentRide.status === 3) && <Button variant="contained" color='success' className="text-capitalize rounded-pill" onClick={confirmRideDriver}>Select Standard</Button>}
       </div>
     </div>
   );

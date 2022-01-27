@@ -20,7 +20,7 @@ import MailIcon from '@mui/icons-material/ContactSupportOutlined';
 import MoneyIcon from '@mui/icons-material/MoneyOutlined';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 import TravelExploreIcon from '@mui/icons-material/TravelExploreOutlined'
-import { IconButton, InputAdornment } from "@mui/material";
+import { IconButton, InputAdornment, Stack } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/LogoutOutlined';
 // import Switch from '@mui/material/Switch';
@@ -143,48 +143,6 @@ const Puller = styled(Box)(({ theme }) => ({
 }));
 
 // --end
-
-// const AntSwitch = styled(Switch)(({ theme }) => ({
-//     width: 28,
-//     height: 16,
-//     padding: 0,
-//     display: 'flex',
-//     '&:active': {
-//         '& .MuiSwitch-thumb': {
-//             width: 15,
-//         },
-//         '& .MuiSwitch-switchBase.Mui-checked': {
-//             transform: 'translateX(9px)',
-//         },
-//     },
-//     '& .MuiSwitch-switchBase': {
-//         padding: 2,
-//         '&.Mui-checked': {
-//             transform: 'translateX(12px)',
-//             color: '#fff',
-//             '& + .MuiSwitch-track': {
-//                 opacity: 1,
-//                 backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
-//             },
-//         },
-//     },
-//     '& .MuiSwitch-thumb': {
-//         boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-//         width: 12,
-//         height: 12,
-//         borderRadius: 6,
-//         transition: theme.transitions.create(['width'], {
-//             duration: 200,
-//         }),
-//     },
-//     '& .MuiSwitch-track': {
-//         borderRadius: 16 / 2,
-//         opacity: 1,
-//         backgroundColor:
-//             theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
-//         boxSizing: 'border-box',
-//     },
-// }));
 
 function LocationMarker() {
     const [position, setPosition] = useState(null);
@@ -351,27 +309,6 @@ const RideDashboard = (props) => {
         selectedFrom.y && selectedTo.y;   
       };
 
-    // const initRouteControl = () => {
-    //     routeControl.current = L.Routing.control({
-    //       show: true,
-    //       fitSelectedRoutes: true,
-    //       plan: false,
-    //       lineOptions: {
-    //         styles: [
-    //           {
-    //             color: "blue",
-    //             opacity: "0.7",
-    //             weight: 6
-    //           }
-    //         ]
-    //       },
-    //       router: L.Routing.mapbox(`${process.env.REACT_APP_MAPBOX_ACCESSTOKEN}`)
-    //     })
-    //       .addTo(map.current)
-    //       .getPlan();  
-    //   };
-
-
     if (loggedIn === false) {
         return <Redirect to="/ride" />
     }
@@ -455,7 +392,7 @@ const RideDashboard = (props) => {
             return <AddressPickerForm heightCallback={() => setwhereToHeight(40)}  />
         } 
         if (isUser && currentRide && currentRide.status === 3) {
-            setwhereToHeight(60)
+            if(whereToHeight !== 60) setwhereToHeight(40)
             return <ConfirmRide user={currentRide.driver} isDriver={false} currentRide={currentRide} />
         }
         if (isUser && currentRide && currentRide.status === 1) {
@@ -566,9 +503,36 @@ const RideDashboard = (props) => {
                             />
 
                             <LocationMarker />
+
                         </MapContainer>
 
                     </div>
+
+                    
+                    <Root sx={{
+                        display: { xs: 'none', sm: 'block' }
+                    }}>
+                        <StyledBox
+                            sx={{
+                                width: 350,
+                                padding: 2,
+                                maxHeight: 400,
+                                position: 'absolute',
+                                top: 120,
+                                left: 120,
+                                overflow: 'auto'
+                            }}>
+                                <Stack spacing={2}>
+                                    <div>
+                                        {renderSwipeContent()}
+                                    </div>
+                                    <div className="d-flex justify-content-center mt-4">{isLoading && <CircularProgress />}</div>
+                                        
+                                </Stack>
+                            </StyledBox>
+
+                    </Root>
+
 
                     <Root sx={{
                         display: { xs: 'block', sm: 'none' }
@@ -606,10 +570,11 @@ const RideDashboard = (props) => {
                             <StyledBox
                                 sx={{
                                     position: 'absolute',
-                                    top: -whereToHeight,
+                                    top: `calc(10% - ${whereToHeight}px)`,
                                     borderTopLeftRadius: 8,
                                     borderTopRightRadius: 8,
                                     visibility: 'visible',
+                                    padding: 2.1,
                                     right: 0,
                                     left: 0,
                                     display: { xs: 'block', sm: 'none' }
@@ -618,71 +583,25 @@ const RideDashboard = (props) => {
                                 <Puller sx={{
                                     display: { xs: 'block', sm: 'none' }
                                 }} />
-                                <Typography sx={{ p: 3.8, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}></Typography>
                             </StyledBox>
                             <StyledBox
                                 sx={{
                                     px: 2,
                                     pb: 2,
+                                    mt: 2,
                                     height: '100%',
                                     overflow: 'auto',
                                     width: '100%',
                                     display: { xs: 'block', sm: 'none' }
                                 }}
                             >
-                                {/* <Skeleton sx={{
-                                display: { xs: 'block', sm: 'none' }
-                            }} variant="rectangular" height="50%" /> */}
-
-                            {/* form starts here */}
-                                {/* {whereToHeight === 40 && 
-                                    <div className="d-flex w-100">
-                                        {!showRides ? 
-                                            <TextField
-                                                fullWidth
-                                                className="pt-ss3"
-                                                // {...params}
-                                                // label="Search destination"
-                                                placeholder="Where to?"
-                                                variant="filled"
-                                                InputProps={{
-                                                    // ...params.InputProps,
-                                                    // type: 'search',
-                                                    startAdornment: 
-                                                        <InputAdornment position="start"><SearchOutlinedIcon /></InputAdornment>,
-                                                }}
-                                            // onChange={(e) => fetchAddrSuggestions(e, { inputName: "dest" })}
-                                            // ref={destinationRef}
-                                                onClick={() => setwhereToHeight(100)}
-                                            />
-                                            : <div></div>
-                                        }
-                                    </div>
-                                } */}
-
-                                {/* {whereToHeight === 100 && */}
-                                {/* className={whereToHeight === 100 ? "d-block" : "d-none"} */}
                                 <div >
                                     {renderSwipeContent()}
                                 </div>
 
                                 
                                 <div className="d-flex justify-content-center mt-4">{isLoading && <CircularProgress />}</div>
-                                {/* // } */}
-
-                                {/* <Form.Group className="mb-3">
-                                    <InputGroup>
-                                        <span className="country-prefix"><MyLocationOutlinedIcon /></span>
-                                        <Form.Control className="phone-field" type="text" placeholder="Search pick-up location" />
-                                    </InputGroup>
-                                </Form.Group> */}
-
-                                {/* <Form.Group className="mb-3">
-                                    <InputGroup>
-                                        <span className="country-prefix"><LocationOnOutlinedIcon /></span>
-                                        <Form.Control className="phone-field" type="text" placeholder="Search destination" />
-                                    </InputGroup>
-                                </Form.Group> */}
+                                
                             </StyledBox>
                         </SwipeableDrawer>
                     </Root>

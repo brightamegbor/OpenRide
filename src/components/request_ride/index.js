@@ -46,37 +46,11 @@ function RequestRide(props) {
   };
 
   return (
-    <div className="request-ride">
-      <div className="request-ride__content">
-        <div className="request-ride__container">
-          {/* <div className="request-ride__title">Requesting a Ride</div> */}
-          {/* <div className="request-ride__close">
-            <img
-              alt="close"
-              onClick={() => toggleModal(false)}
-              src="https://static.xx.fbcdn.net/rsrc.php/v3/y2/r/__geKiQnSG-.png"
-            />
-          </div> */}
-        </div>
-        <div className="request-ride__subtitle"></div>
-        <div className="request-ride__form">
-          {/* <p>
-            You entered the pickup location successfully. Do you want to request a ride now ?
-          </p>
-          <button className="request-ride__btn request-ride__change-btn" onClick={() => toggleModal(false)}>
-            Change
-          </button>
-          <button className="request-ride__btn" onClick={requestRide}>
-            Requesting a ride now
-          </button> */}
-          
-          
-          <Button fullWidth className="p-3 rounded-pill" variant="contained" onClick={requestRide}>
-              Get available rides
-          </Button>
-        </div>
+      <div>
+        <Button fullWidth className="p-3 rounded-pill" variant="contained" onClick={requestRide}>
+            Get available rides
+        </Button>
       </div>
-    </div>
   );
 }
 

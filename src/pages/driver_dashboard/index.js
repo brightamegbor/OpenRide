@@ -22,7 +22,7 @@ import MoneyIcon from '@mui/icons-material/MoneyOutlined';
 import NotificationIcon from '@mui/icons-material/NotificationsOutlined'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 import TravelExploreIcon from '@mui/icons-material/TravelExploreOutlined'
-import { IconButton } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/LogoutOutlined';
 import Switch from '@mui/material/Switch';
@@ -250,19 +250,6 @@ const DriverDashboard = (props) => {
         })
     }
 
-    // const currentLocation = useCallback(() => {
-    //     navigator.geolocation.getCurrentPosition(
-    //         (position) => {
-    //             setCurrentLocMap({
-    //                 longitude: position.coords.longitude,
-    //                 latitude: position.coords.latitude
-    //             });
-    //             // console.log(currentLocMap.longitude);
-    //         },
-    //         err => console.log(err)
-    //     );
-    // }, []);
-
     const initialize = useCallback(async () => {
         const _loggedIn = await LocalStorage.getBool("isLoggedIn");
         setloggedIn(_loggedIn);
@@ -455,6 +442,28 @@ const DriverDashboard = (props) => {
                     </div>
 
                     <Root sx={{
+                        display: { xs: 'none', sm: 'block' }
+                    }}>
+                        <StyledBox
+                            sx={{
+                                width: 350,
+                                padding: 2,
+                                // height: 300,
+                                position: 'absolute',
+                                top: 120,
+                                left: 120,
+                            }}>
+                                <Stack spacing={2}>
+                                    <div>
+                                        {renderSwipeContent()}
+                                    </div>
+                                        
+                                </Stack>
+                            </StyledBox>
+
+                    </Root>
+
+                    <Root sx={{
                         display: { xs: 'block', sm: 'none' }
                     }}>
                         <Global
@@ -490,10 +499,11 @@ const DriverDashboard = (props) => {
                         <StyledBox
                             sx={{
                                 position: 'absolute',
-                                top: -drawerBleeding,
+                                top: `calc(10% - ${whereToHeight}px)`,
                                 borderTopLeftRadius: 8,
                                 borderTopRightRadius: 8,
                                 visibility: 'visible',
+                                padding: 2.1,
                                 right: 0,
                                 left: 0,
                                 display: { xs: 'block', sm: 'none' }
@@ -502,22 +512,18 @@ const DriverDashboard = (props) => {
                             <Puller sx={{
                                 display: { xs: 'block', sm: 'none' }
                             }} />
-                                <Typography sx={{ p: 3.5, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}></Typography>
+                                {/* <Typography sx={{ p: 3.5, color: 'text.secondary', display: { xs: 'block', sm: 'none' } }}></Typography> */}
                         </StyledBox>
                         <StyledBox
                             sx={{
                                 px: 2,
                                 pb: 2,
+                                mt: 2,
                                 height: '100%',
                                 overflow: 'auto',
                                 display: { xs: 'block', sm: 'none' }
                             }}
                         >
-                            {/* <Skeleton sx={{
-                                display: { xs: 'block', sm: 'none' }
-                            }} variant="rectangular" height="50%" /> */}
-
-                            {/* <Typography>No live request available</Typography> */}
                             <div>
                                {renderSwipeContent()}
                             </div>

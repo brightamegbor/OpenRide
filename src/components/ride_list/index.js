@@ -68,8 +68,8 @@ function RideList() {
   const renderRideList = () => {
     if (rideRequests && rideRequests.length !== 0) {
       return rideRequests.map(request => (
-        <div className="ride-list__result-item" key={request.rideUuid}>
-          <div className="ride-list__result-icon">
+        <div key={request.rideUuid}>
+          <div>
           <LocationOnOutlinedIcon />
           </div>
           <div>
@@ -86,16 +86,14 @@ function RideList() {
 
   return (
     <div className="ride-list">
-      <div className="ride-list__container">
+      <div>
         <div className="pb-2">Ride Requests</div>
         <div></div>
       </div>
-      <div className="ride-list__content">
+      <div>
         {renderRideList()}
       </div>
       <div className="margin-bottom-10">
-        <p></p>
-        <p></p>
         <p></p>
         <p></p>
       </div>  

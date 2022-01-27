@@ -110,16 +110,16 @@ function RideDetail(props) {
 
   return (
     <div className="ride-detail">
-      <div className="ride-detail__user-avatar">
-        <img width={60} height={70} src={user.profile_photo} alt={user.email} />
+      <div className="">
+        <img width={60} height={70} src={user.profile_photo} alt={"user photo"} />
       </div>
-      <p className="ride-detail__user-info">{user.email} - {user.mobileNumber}</p>
-      <div className="ride-detail__actions">
-        <p className="ride-detail__result-label"><span>From: </span>{currentRide.pickup && currentRide.pickup.label ? currentRide.pickup.label : ''}</p>
-        <p className="ride-detail__result-label"><span>To: </span>{currentRide.destination && currentRide.destination.label ? currentRide.destination.label : ''}</p>
-        {/* <button className="ride-detail__btn" onClick={talkToUser}>{isDriver ? 'Talk to User' : 'Talk to Driver'}</button> */}
+      <p className="">{user.email} - {user.mobileNumber}</p>
+      <div className="d-flex flex-row justify-content-center flex-wrap gap-3 pt-4">
+        <p className=""><span className='fw-bold'>From: </span>{currentRide.pickup && currentRide.pickup.label ? currentRide.pickup.label : ''}</p>
+        <p className=""><span className='fw-bold'>To: </span>{currentRide.destination && currentRide.destination.label ? currentRide.destination.label : ''}</p>
+        <Button variant="outlined" onClick={null}>{isDriver ? 'Talk to User' : 'Talk to Driver'}</Button>
         <Button variant="contained" color='error' onClick={cancelRide}>Cancel the Ride</Button>
-        {(isDriver && currentRide.status === 1) && <Button variant="contained" color='success' className="ms-4" onClick={finishRide}>Finish the Ride</Button>}
+        {(isDriver && currentRide.status === 1) && <Button variant="contained" color='success' className="" onClick={finishRide}>Finish the Ride</Button>}
         {(isDriver && driverConfirm && currentRide.status === 5) && <Button variant="contained" color='success' className="ms-4" onClick={confirmRideDriver}>Confirm ride</Button>}
       </div>
     </div>
