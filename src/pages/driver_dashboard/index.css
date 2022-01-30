@@ -1,0 +1,31 @@
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.top-toolbar{
+    height: 7%;
+}
+
+.MapWrapper {
+     width: 100%;
+     height: 91%;
+     position: fixed;
+}
+
+@media screen and (min-width: 800px) {
+  .MapWrapper {
+    width: 94.7%;
+    height: 90%;
+  }
+}
+
+@keyframes fade { 
+  from { opacity: 0.5; } 
+}
+
+.blinking {
+  animation: fade 1s infinite alternate;
+}

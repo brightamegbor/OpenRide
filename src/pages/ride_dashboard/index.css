@@ -1,0 +1,51 @@
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.top-toolbar{
+    height: 7%;
+}
+
+.MapWrapper {
+     width: 100%;
+     height: 91%;
+     position: fixed;
+}
+
+@media screen and (min-width: 800px) {
+  .MapWrapper {
+    width: 94.7%;
+    height: 90%;
+  }
+}
+
+@keyframes fade { 
+  from { opacity: 0.5; } 
+}
+
+.blinking {
+  animation: fade 1s infinite alternate;
+}
+
+.leaflet-routing-container.leaflet-bar.leaflet-routing-container-hide.leaflet-control h2, 
+.leaflet-routing-container.leaflet-bar.leaflet-routing-container-hide.leaflet-control table,
+.leaflet-routing-alt-minimized h3 {
+  display: none;
+}
+
+.leaflet-routing-container.leaflet-bar.leaflet-routing-container-hide.leaflet-control {
+  border: none !important;
+}
+
+.leaflet-routing-alternatives-container .leaflet-routing-alt:first-child {
+  background-color: white;
+  padding: 2px 5px;
+  border-radius: 9px;
+} 
+
+.cursor-pointer {
+  cursor: pointer;
+}

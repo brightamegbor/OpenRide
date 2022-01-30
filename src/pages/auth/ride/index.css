@@ -1,0 +1,30 @@
+.next-btn {
+    width: 100%;
+}
+
+.confirmInput-container, .vi__wrapper {
+  height: auto !important;
+  width: 100% !important;
+}
+
+.confirmInput-character {
+  line-height: 50px;
+  font-size: 36px;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  margin-left: 8px;
+}
+
+.confirmInput-character:first-child {
+  margin-left: 0;
+}
+
+.confirmInput-character--inactive {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.confirmInput-character--selected {
+  border: 1px solid white;
+}

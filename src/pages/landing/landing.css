@@ -1,0 +1,224 @@
+
+.top-banner {
+    width: 100%;
+    background-size: cover;
+    /* background-image: url('/img/banner-home.jpg'); */
+    background-repeat: no-repeat;
+}
+
+.bg-overlay {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background: rgb(255, 255, 255);
+}
+
+.bg-dark {
+    background: transparent !important;
+    /* position: absolute; */
+    width: 100%;
+}
+
+.custom-pos {
+    padding-top: 18rem !important;
+    width: 300px;
+}
+
+ @media (min-width: 768px) {
+     .custom-pos {
+         width: 500px;
+     }
+
+     .custom-form {
+         width: 500px;
+     }
+
+     .form-shadow {
+         
+        box-shadow: 0px 2px 5px darkgrey
+     }
+ }
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.separator::before, .separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgb(182, 175, 175);
+}
+
+.separator::before {
+    margin-right: .35em;
+}
+
+.separator::after {
+    margin-left: .35em;
+}
+
+.Soc-icon {
+    font-size: xx-large;
+    margin: .75rem;
+}
+
+
+.landing-nav .navbar-brand {
+    font-size: 22px !important;
+    font-weight: bolder !important;
+    color: black !important;
+}
+
+.landing-nav .nav-item:not(:last-child) a {
+    color: black;
+}
+
+
+
+.landing-caption {
+    color: #14AFE7;
+}
+
+.landing-caption h5 {
+    font-size: 30px;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+.landing-caption p {
+    font-size: 19px;
+}
+
+/* .fancy-outer {
+    overflow-x: hidden;
+} */
+
+.landing-page .navbar-brand {
+    line-height: 3;
+}
+
+.landing_phone {
+    background-color: #06DEDB;
+    /* height: 70%; */
+}
+
+/* .landing-page .landing_phone img {
+    padding-top: 20px;
+} */
+
+.landing-caption p {
+    color: black;
+    font-size: 1em;
+}
+
+/* .landing-caption {
+    background-color: #18a8ea0c;
+} */
+
+@media only screen and (min-width: 1024px) {
+    .top-banner {
+        height: 600px;
+    }
+
+    .landing-nav .nav-item {
+        padding-top: 5px;
+    }
+    
+    .landing-nav .nav-item {
+        line-height: 3;
+    }
+    .fancy-background {
+        overflow-x: clip !important;
+        position: absolute;
+        background-color: #06DEDB;
+        width: 550px;
+        height: 425px;
+        border-radius: 35px;
+        transform: rotate(-10deg);
+        right: -30px;
+        top: -12px;
+    }
+
+    .bg-overlay .fancy-background-2 {
+        position: absolute;
+        background-color: #18a8ea0c;
+        width: 540px;
+        height: 500px;
+        border-radius: 35px;
+        right: 30px;
+        top: 80px;
+    }
+
+    .landing_phone {
+        z-index: 9999;
+    }
+
+    .landing_phone img {
+        position: absolute;
+        right: 150px;
+        top: 81px;
+        height: 501px;
+        width: 250px;
+    }
+
+    .landing-caption p {
+        width: 50%;
+    }
+
+}
+
+
+.nav-right {
+    z-index: 9999;
+}
+
+.nav-right .nav-item a {
+    color: black !important;
+}
+
+.nav-item {
+    font-weight: 500;
+}
+
+
+
+.landing-page {
+    overflow-x: hidden;
+    position: relative;
+}
+
+.landing-driver-banner {
+    background-color: #16AAE8;
+    /* height: 200px; */
+}
+
+.landing-page .card {
+    border: none;
+}
+
+.landing-page .footer {
+    background-color: honeydew;
+    padding-bottom: 60px;
+}
+
+.landing-page .footer .socials svg:not(:last-child)  {
+    margin-right: 15px;
+}
+
+.landing-page .footer .socials svg {
+    margin-top: -10px;
+}
+
+.navbar-toggler,
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler-icon:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+a {
+    text-decoration: none;
+}

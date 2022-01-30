@@ -21,3 +21,15 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.env
+.yarn/cache
+public/images/landing_phone.png:Zone.Identifier
+public/images/landing_phone2.png:Zone.Identifier
+src/assets/icons/my_location_icon1.png:Zone.Identifier
+src/assets/images/ghana_drivers_license-ghana.png:Zone.Identifier
+src/assets/icons/my_location_icon.svg:Zone.Identifier
+src/assets/images/profile_photo_upload.png:Zone.Identifier
+src/assets/images/proof_of_insurance-ghana.png:Zone.Identifier
+src/assets/images/reverse_side_of_ghana_drivers_license-ghana.png:Zone.Identifier
+src/assets/images/roadworthiness_sticker_from_the_dvla-ghana.png:Zone.Identifier
+install-ubuntu.sh
