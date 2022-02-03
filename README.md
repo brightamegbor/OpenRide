@@ -1,10 +1,16 @@
-# Getting Started with Create React App
+# OpenRide (Bolt ride hailing clone) 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Built using React, Openstreet map and Firebase.
 
-## Available Scripts
+## When you clone this repo
 
-In the project directory, you can run:
+In the project directory, first run:
+
+### `yarn install`
+
+To install dependencies
+
+Then you can run
 
 ### `yarn start`
 
